@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import url("../node_modules/bootstrap/dist/css/bootstrap.min.css");
+@import url("../node_modules/primeicons/primeicons.css");
+// To have a light theme, use this:
+//@import url("../node_modules/primeng/resources/themes/saga-blue/theme.css");
+@import url("../node_modules/primeng/resources/themes/vela-blue/theme.css");
+@import url("../node_modules/primeng/resources/primeng.min.css");
