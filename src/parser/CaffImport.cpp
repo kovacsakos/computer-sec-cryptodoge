@@ -34,6 +34,10 @@ char* CaffImport::importCaffAsJson(const char* filepath) {
 	return json;
 }
 
+void CaffImport::free(const char* address) {
+	delete address;
+}
+
 char* CaffImport::convertCaffToJson(Caff& caff) {
 	std::string json;
 	json.reserve(200000);

@@ -19,6 +19,7 @@ namespace CaffImport {
 #ifdef COMPILE_EXE
 	char* importCaffAsJsonFromString(const char* caff);
 	char* importCaffAsJson(const char* filepath);
+	void free(const char* address);
 #endif
 
 #ifdef __cplusplus
@@ -29,6 +30,7 @@ namespace CaffImport {
 
 		__declspec (dllexport) char* importCaffAsJsonFromString(const char* caff);
 		__declspec (dllexport)	char* importCaffAsJson(const char* filepath);
+		__declspec (dllexport)	void free(const char* address);
 
 #endif
 #ifdef __cplusplus

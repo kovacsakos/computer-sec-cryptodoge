@@ -171,7 +171,7 @@
     <NMakeOutput>parser.dll</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>mingw32-make clean-windows dll</NMakeReBuildCommandLine>
-    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>NDEBUG;COMPILE_EXE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
@@ -181,7 +181,7 @@
     <NMakeOutput>parser.exe</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>mingw32-make clean-windows exe</NMakeReBuildCommandLine>
-    <NMakePreprocessorDefinitions>NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>NDEBUG;COMPILE_DLL;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
