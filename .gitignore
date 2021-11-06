@@ -401,3 +401,5 @@ FodyWeavers.xsd
 /src/parser/3.caff
 /src/parser/2.caff
 /src/parser/1.caff
+/src/parser/parserExe.o
+/src/parser/parser.exe

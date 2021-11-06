@@ -25,3 +25,11 @@ ParserException.o: ParserException.cpp ParserException.hpp
 clean:
 	-del parser.dll
 	-del *.o
+
+parserExeMake: parserExe
+
+parserExe: CaffImport.o Logger.o ParserException.o parserExe.o
+	g++ $(SEC_OPTIONS) -o parser.exe parserExe.o CaffImport.o ParserException.o Logger.o
+
+parserExe.o: parserExe.cpp
+	g++ $(SEC_OPTIONS) -c -std=c++11 parserExe.cpp

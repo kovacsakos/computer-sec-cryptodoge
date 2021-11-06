@@ -72,7 +72,7 @@
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>mingw32-make</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>mingw32-make all</NMakeBuildCommandLine>
     <NMakeOutput>parser.dll</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>mingw32-make clean all</NMakeReBuildCommandLine>
@@ -91,7 +91,7 @@
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>mingw32-make</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>mingw32-make all</NMakeBuildCommandLine>
     <NMakeOutput>parser.dll</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean</NMakeCleanCommandLine>
     <NMakeReBuildCommandLine>mingw32-make clean all</NMakeReBuildCommandLine>

@@ -16,16 +16,17 @@
 
 namespace CaffImport {
 
-	#ifdef __cplusplus
-		extern "C"
-		{
-	#endif
+#ifdef __cplusplus
+	extern "C"
+	{
+#endif
 
-	__declspec (dllexport)	char* importCaffAsJson(std::string filepath);
+		__declspec (dllexport) char* importCaffAsJsonFromString(const char* caff);
+		__declspec (dllexport)	char* importCaffAsJson(const char* filepath);
 
-	#ifdef __cplusplus
-		}
-	#endif
+#ifdef __cplusplus
+	}
+#endif
 	using duration_t = uint64_t;
 
 	class Block {
@@ -54,6 +55,19 @@ namespace CaffImport {
 		inline Block& operator[](uint64_t idx) { return blocks[idx]; }
 		inline std::vector<Block>& getBlocks() { return blocks; }
 		inline uint64_t size() { return blocks.size(); }
+
+		inline CaffBlocks() { blocks = std::vector<Block>(); }
+		inline CaffBlocks(const CaffBlocks& other) {
+			blocks = other.blocks;
+		}
+		inline CaffBlocks& operator=(CaffBlocks&& other) noexcept {
+			blocks = std::move(other.blocks);
+			return *this;
+		}
+		inline CaffBlocks& operator=(const CaffBlocks& other) {
+			blocks = other.blocks;
+			return *this;
+		}
 	};
 
 	class Pixel {
@@ -72,7 +86,10 @@ namespace CaffImport {
 		//CIFF PIXELS
 		std::vector<std::vector<Pixel>> pixels;
 
-		inline Ciff() {}
+		inline Ciff() {
+			height = 0;
+			width = 0;
+		}
 		Ciff(uint64_t height, uint64_t width);
 		void reSize(uint64_t height, uint64_t width);
 
@@ -94,14 +111,18 @@ namespace CaffImport {
 		std::vector<std::pair<duration_t, Ciff>> ciffs;
 	};
 
+	char* convertCaffToJson(Caff& caff);
+
 	template <typename Iterator>
 	using is_forward_iterator = typename std::enable_if<
 		std::is_base_of<
-			std::forward_iterator_tag,
-			typename std::iterator_traits<Iterator>::iterator_category>::value
-		>::type*;
+		std::forward_iterator_tag,
+		typename std::iterator_traits<Iterator>::iterator_category>::value
+	>::type*;
 
 	CaffBlocks readCaffBlocks(std::string filepath);
+
+	CaffBlocks readCaffBlocks(std::istream& caffStream);
 
 	template <typename Iterator, is_forward_iterator<Iterator> = nullptr>
 	uint64_t readLong(Iterator& iterator);
@@ -117,6 +138,8 @@ namespace CaffImport {
 	Caff parseCaffBlocks(CaffBlocks rc);
 
 	Caff importCaff(std::string filepath);
+	Caff importCaff(std::istream& is);
+
 };
 
 std::istream& operator>>(std::istream& is, CaffImport::CaffBlocks& rawCaff);
