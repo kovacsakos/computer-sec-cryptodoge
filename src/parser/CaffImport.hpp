@@ -16,17 +16,25 @@
 
 namespace CaffImport {
 
+#ifdef COMPILE_EXE
+	char* importCaffAsJsonFromString(const char* caff);
+	char* importCaffAsJson(const char* filepath);
+#endif
+
 #ifdef __cplusplus
 	extern "C"
 	{
 #endif
+#ifdef COMPILE_DLL
 
 		__declspec (dllexport) char* importCaffAsJsonFromString(const char* caff);
 		__declspec (dllexport)	char* importCaffAsJson(const char* filepath);
 
+#endif
 #ifdef __cplusplus
 	}
 #endif
+
 	using duration_t = uint64_t;
 
 	class Block {

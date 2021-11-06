@@ -161,7 +161,7 @@ CaffBlocks CaffImport::readCaffBlocks(std::istream& caffStream) {
 	CaffBlocks newCaff;
 
 	auto length = caffStream.rdbuf()->in_avail();
-	if (length > pow(2, sizeof(void*)) - 1) {
+	if (length > pow(2, sizeof(void*) * 8) - 1) {
 		throw ParserException("System architecture doesn't support caff size of " + length);
 	}
 
