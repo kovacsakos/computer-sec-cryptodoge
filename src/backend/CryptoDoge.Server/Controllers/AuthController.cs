@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Server.Controllers
@@ -14,7 +15,8 @@ namespace CryptoDoge.Server.Controllers
         [HttpGet]
         public ActionResult<string> Echo(string msg)
         {
-            return Ok(msg);
+            StringBuilder sb = null;
+            return Ok(sb.Append(msg).ToString());
         }
     }
 }
