@@ -40,13 +40,17 @@ jobs:
         run: |
           cd src/parser
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make exe
+          ls -la
           cd ..
+          ls -la
           cd ..
+          ls -la
       - name: Run sonar-scanner
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          ls -la
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.projectBaseDir="src/parser" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.projectKey="kovacsakos_computer-sec-cryptodoge_caff_parser" --define sonar.organization="kovacsakos"
       - name: Run valgrind
         run: |
