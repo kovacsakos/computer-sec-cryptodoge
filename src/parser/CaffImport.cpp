@@ -1,7 +1,35 @@
-#include "CaffImport.hpp"
-#include "Logger.hpp"
+#include "CaffImport.h"
+#include "Logger.h"
+
 
 using namespace CaffImport;
+
+
+__declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
+	std::stringstream caffStream;
+	unsigned long long i;
+	for (i = 0; i < size; i++) {
+		caffStream << caffBytes[i];
+	}
+	auto caff = importCaff(caffStream);
+	char* json = convertCaffToJson(caff);
+	return json;
+}
+
+__declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath) {
+	auto caff = importCaff(filepath);
+	char* json = convertCaffToJson(caff);
+	return json;
+}
+
+__declspec(dllexport) void __stdcall freeNativeMem(char* address) {
+	delete address;
+}
+
+__declspec(dllexport) void __stdcall write() {
+	std::cout << "Writing" << std::endl;
+}
+
 
 void appendObj(std::string& ss, std::string name, unsigned long long data) {
 	ss += "\"";
@@ -19,27 +47,6 @@ void appendObj(std::string& ss, std::string name, std::string data) {
 	ss += "\"";
 	ss += data;
 	ss += "\"";
-}
-
-char* CaffImport::importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
-	std::stringstream caffStream;
-	uint64_t i;
-	for (i = 0; i < size; i++) {
-		caffStream << caffBytes[i];
-	}
-	auto caff = importCaff(caffStream);
-	char* json = convertCaffToJson(caff);
-	return json;
-}
-
-char* CaffImport::importCaffAsJson(const char* filepath) {
-	auto caff = importCaff(filepath);
-	char* json = convertCaffToJson(caff);
-	return json;
-}
-
-void CaffImport::free(char* address) {
-	delete address;
 }
 
 char* CaffImport::convertCaffToJson(Caff& caff) {
@@ -302,7 +309,7 @@ Ciff CaffImport::parseCiff(Iterator& ciffIter, Iterator& ciffIterEnd) {
 	ciffIter++;
 
 	std::vector<std::string> tags;
-	while (ciffIterEnd - ciffIter > contentSize) {
+	while (std::ptrdiff_t(ciffIterEnd - ciffIter) > contentSize) {
 		std::string currentTag;
 		while (*ciffIter != '\0') {
 			if (*ciffIter == '\n') throw ParserException("Tags cannot be multiline.");

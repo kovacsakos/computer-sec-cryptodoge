@@ -167,20 +167,20 @@
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='parserExe|x64'">
-    <NMakeBuildCommandLine>mingw32-make dll</NMakeBuildCommandLine>
-    <NMakeOutput>parser.dll</NMakeOutput>
+    <NMakeBuildCommandLine>mingw32-make exe</NMakeBuildCommandLine>
+    <NMakeOutput>parser.exe</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>mingw32-make clean-windows dll</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>mingw32-make clean-windows exe</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;COMPILE_EXE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='parserDll|x64'">
-    <NMakeBuildCommandLine>mingw32-make exe</NMakeBuildCommandLine>
-    <NMakeOutput>parser.exe</NMakeOutput>
+    <NMakeBuildCommandLine>mingw32-make dll</NMakeBuildCommandLine>
+    <NMakeOutput>parser.dll</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>mingw32-make clean-windows exe</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>mingw32-make clean-windows dll</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;COMPILE_DLL;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>
@@ -198,11 +198,14 @@
     <Text Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CaffImport.hpp" />
-    <ClInclude Include="Logger.hpp" />
-    <ClInclude Include="ParserException.hpp" />
+    <ClInclude Include="CaffImport.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="ParserException.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="1.caff" />
+    <None Include="2.caff" />
+    <None Include="3.caff" />
     <None Include="parser.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

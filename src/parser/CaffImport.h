@@ -2,7 +2,7 @@
 #ifndef CaffImportHPP
 #define CaffImportHPP
 //---------------------------------------------------------------------------
-
+#include <windows.h>
 #include <fstream>
 #include <vector>
 #include <memory>
@@ -13,29 +13,25 @@
 #include <sstream>
 #include <string>
 #include <cmath>
+#include <iostream>
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+	__declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size);
+	__declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath);
+	__declspec(dllexport) void __stdcall freeNativeMem(char* address);
+	__declspec(dllexport) void __stdcall write();
+
+#ifdef __cplusplus
+}
+#endif
+
 
 namespace CaffImport {
 
-#ifdef COMPILE_EXE
-	char* importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size);
-	char* importCaffAsJson(const char* filepath);
-	void free(char* address);
-#endif
-
-#ifdef COMPILE_DLL
-#ifdef __cplusplus
-	extern "C"
-	{
-#endif
-
-		__declspec (dllexport) char* importCaffAsJsonFromString(unsigned char* caffBytes, unsigned long long size);
-		__declspec (dllexport)	char* importCaffAsJson(const char* filepath);
-		__declspec (dllexport)	void free(char* address);
-
-#ifdef __cplusplus
-	}
-#endif
-#endif
 
 	using duration_t = uint64_t;
 
