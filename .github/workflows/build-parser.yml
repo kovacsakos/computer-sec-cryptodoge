@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened]
 jobs:
   build:
-    name: Build
+    name: Build parser
     runs-on: ubuntu-latest
     env:
       SONAR_SCANNER_VERSION: 4.4.0.2170
@@ -46,3 +46,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+      - name: Run valgrind
+        run: |
+          sudo apt install valgrind
+          cd src/parser
+          valgrind ./parser.exe
