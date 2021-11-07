@@ -390,3 +390,16 @@ FodyWeavers.xsd
 # Visual Paradigm
 *.vpp.bak*
 *.vpp.lck
+/src/parser/Include/boost
+/src/parser/ParserException.o
+/src/parser/ParserException.hpp.gch
+/src/parser/parser.o
+/src/parser/Logger.o
+/src/parser/Logger.hpp.gch
+/src/parser/CaffImport.o
+/src/parser/CaffImport.hpp.gch
+/src/parser/3.caff
+/src/parser/2.caff
+/src/parser/1.caff
+/src/parser/parserExe.o
+/src/parser/parser.exe
