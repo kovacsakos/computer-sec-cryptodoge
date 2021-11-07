@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+#ifdef DO_NOT_INCLUDE
 #ifdef COMPILE_DLL
 #include <windows.h>
 //---------------------------------------------------------------------------
@@ -16,19 +17,23 @@ int WINAPI WinMain(
     return 0;
 }
 #endif
-#ifdef COMPILE_EXE
+#endif
+
+
 #include <iostream>
 #include "CaffImport.hpp"
 
 int main() {
     std::string filename = "1.caff";
-    std::ifstream caffStream(filename);
+    std::ifstream caffStream(filename.c_str(), std::ios::binary);
     std::stringstream buffer;
-    char c;
-    while (caffStream.read(&c, 1)) {
-        buffer << c;
+
+    std::vector<unsigned char> chars;
+    unsigned char c;
+    while (caffStream.read(reinterpret_cast<char*>(&c), 1)) {
+        chars.push_back(c);
     }
 
-    std::cout << CaffImport::importCaffAsJsonFromString(buffer.str().c_str()) << std::endl;
+    std::cout << CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size()) << std::endl;
 }
-#endif
+
