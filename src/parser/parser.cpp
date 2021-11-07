@@ -14,6 +14,7 @@ int main() {
         chars.push_back(c);
     }
 
-    std::cout << importCaffAsJsonFromString(&chars.data()[0], chars.size()) << std::endl;
+    //std::cout << CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size()) << std::endl;
+    CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size());
 }
 
