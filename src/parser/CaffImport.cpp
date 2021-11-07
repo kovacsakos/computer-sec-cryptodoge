@@ -21,8 +21,12 @@ void appendObj(std::string& ss, std::string name, std::string data) {
 	ss += "\"";
 }
 
-char* CaffImport::importCaffAsJsonFromString(const char* caffStr) {
-	std::stringstream caffStream(caffStr);
+char* CaffImport::importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
+	std::stringstream caffStream;
+	uint64_t i;
+	for (i = 0; i < size; i++) {
+		caffStream << caffBytes[i];
+	}
 	auto caff = importCaff(caffStream);
 	char* json = convertCaffToJson(caff);
 	return json;
@@ -34,7 +38,7 @@ char* CaffImport::importCaffAsJson(const char* filepath) {
 	return json;
 }
 
-void CaffImport::free(const char* address) {
+void CaffImport::free(char* address) {
 	delete address;
 }
 
