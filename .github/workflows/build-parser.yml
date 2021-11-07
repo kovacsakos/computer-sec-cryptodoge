@@ -51,7 +51,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           ls -la
-          sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.projectBaseDir="src/parser" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.projectKey="kovacsakos_computer-sec-cryptodoge_caff_parser" --define sonar.organization="kovacsakos"
+          sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.projectBaseDir="src/parser" --define sonar.cfamily.build-wrapper-output="src/parser/${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.projectKey="kovacsakos_computer-sec-cryptodoge_caff_parser" --define sonar.organization="kovacsakos"
       - name: Run valgrind
         run: |
           sudo apt install valgrind
