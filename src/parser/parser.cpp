@@ -22,7 +22,13 @@ int WINAPI WinMain(
 
 int main() {
     std::string filename = "1.caff";
+    std::ifstream caffStream(filename);
+    std::stringstream buffer;
+    char c;
+    while (caffStream.read(&c, 1)) {
+        buffer << c;
+    }
 
-    CaffImport::importCaffAsJson(filename.c_str());
+    std::cout << CaffImport::importCaffAsJsonFromString(buffer.str().c_str()) << std::endl;
 }
 #endif
