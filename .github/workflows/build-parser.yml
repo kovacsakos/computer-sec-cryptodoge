@@ -41,6 +41,8 @@ jobs:
           cd src/parser
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make exe
       - name: Run sonar-scanner
+        with:
+          projectBaseDir: src/parser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
