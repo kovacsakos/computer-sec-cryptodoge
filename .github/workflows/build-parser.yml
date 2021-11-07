@@ -41,13 +41,11 @@ jobs:
           cd src/parser
           build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} make exe
       - name: Run sonar-scanner
-        with:
-          projectBaseDir: src/parser
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.projectKey="kovacsakos_computer-sec-cryptodoge_caff_parser" --define sonar.organization="kovacsakos"
+          sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.projectBaseDir="src/parser" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" --define sonar.projectKey="kovacsakos_computer-sec-cryptodoge_caff_parser" --define sonar.organization="kovacsakos"
       - name: Run valgrind
         run: |
           sudo apt install valgrind
