@@ -1,4 +1,6 @@
+#ifdef WINDOWS_BUILD
 #include <windows.h>
+#endif
 
 #include <iostream>
 #include "CaffImport.h"
