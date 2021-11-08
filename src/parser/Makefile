@@ -7,11 +7,14 @@ LIB_FLAGS:= -shared -Wl,-add-stdcall-alias
 ARCH_64:= -m64
 SOURCE:= parser.cpp CaffImport.cpp CaffImport.h ParserException.cpp ParserException.h Logger.h Logger.cpp
 
-dll: parser_dll
 exe: parser_exe
+dll: parser_dll
+dll-windows: parser_dll_windows
 
 parser_dll: 
 	g++ $(SEC_OPTIONS) $(LIB_FLAGS) -o parser.dll  $(SOURCE)
+parser_dll_windows:
+	g++ $(SEC_OPTIONS) -D WINDOWS_BUILD $(LIB_FLAGS) -o parser.dll  $(SOURCE)
 parser_exe:
 	g++ $(SEC_OPTIONS) -o parser.exe $(SOURCE)
 clean-windows:
