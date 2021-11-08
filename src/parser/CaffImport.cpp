@@ -26,11 +26,6 @@ __declspec(dllexport) void __stdcall freeNativeMem(char* address) {
 	delete address;
 }
 
-__declspec(dllexport) void __stdcall write() {
-	std::cout << "Writing" << std::endl;
-}
-
-
 void appendObj(std::string& ss, std::string name, unsigned long long data) {
 	ss += "\"";
 	ss += name;
