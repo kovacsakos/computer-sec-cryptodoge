@@ -25,7 +25,6 @@ extern "C"
 	__declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size);
 	__declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath);
 	__declspec(dllexport) void __stdcall freeNativeMem(char* address);
-	__declspec(dllexport) void __stdcall write();
 
 #ifdef __cplusplus
 }
