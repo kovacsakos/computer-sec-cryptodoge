@@ -2,7 +2,9 @@
 #ifndef CaffImportHPP
 #define CaffImportHPP
 //---------------------------------------------------------------------------
+#ifdef WINDOWS_BUILD
 #include <windows.h>
+#endif
 #include <fstream>
 #include <vector>
 #include <memory>
