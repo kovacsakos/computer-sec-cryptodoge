@@ -47,7 +47,7 @@ char* importCaffAsJson(const char* filepath) {
 }
 
 void freeNativeMem(char* address) {
-	delete address;
+	delete[] address;
 }
 
 void appendObj(std::string& ss, std::string name, unsigned long long data) {
