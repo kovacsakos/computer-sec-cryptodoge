@@ -17,6 +17,6 @@ int main() {
     }
 
     //std::cout << CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size()) << std::endl;
-    importCaffAsJsonFromString(&chars.data()[0], chars.size());
+    freeNativeMem(importCaffAsJsonFromString(&chars.data()[0], chars.size()));
 }
 
