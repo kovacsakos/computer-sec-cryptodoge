@@ -1,7 +1,7 @@
 RELRO:=-Wl,-z,relro,-z,now
 FORTIFY_SOURCE:=-D_FORTIFY_SOURCE=2
 
-SEC_OPTIONS:= -pie -fPIC
+SEC_OPTIONS:= -pie -fPIC -fcf-protection=full
 # -fstack-protector-all -fstack-clash-protection -pie -fPIE -D_FORTIFY_SOURCE=2 -fcf-protection=full -fPIC
 LIB_FLAGS:= -shared -Wl,-add-stdcall-alias
 ARCH_64:= -m64

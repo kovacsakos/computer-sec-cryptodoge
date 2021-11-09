@@ -33,6 +33,13 @@ extern "C"
 
 namespace CaffImport {
 
+	template <typename Iterator>
+	using is_forward_iterator = typename std::enable_if<
+		std::is_base_of<
+		std::forward_iterator_tag,
+		typename std::iterator_traits<Iterator>::iterator_category>::value
+	>::type*;
+
 
 	using duration_t = uint64_t;
 
@@ -44,7 +51,9 @@ namespace CaffImport {
 		//uint64_t is guaranteed to be 64 bits long by cpp specification
 		uint64_t length;
 	public:
-		Block(std::istream& is);
+
+		template <typename Iterator, is_forward_iterator<Iterator> = nullptr>
+		Block(Iterator& begin, Iterator& end);
 
 		inline unsigned char getId() { return *id; }
 		inline uint64_t getLength() { return data.size(); }
@@ -120,16 +129,10 @@ namespace CaffImport {
 
 	char* convertCaffToJson(Caff& caff);
 
-	template <typename Iterator>
-	using is_forward_iterator = typename std::enable_if<
-		std::is_base_of<
-		std::forward_iterator_tag,
-		typename std::iterator_traits<Iterator>::iterator_category>::value
-	>::type*;
+	CaffBlocks readCaffBlocks(std::vector<unsigned char>& bytes);
 
-	CaffBlocks readCaffBlocks(std::string filepath);
-
-	CaffBlocks readCaffBlocks(std::istream& caffStream);
+	template <typename Iterator, is_forward_iterator<Iterator> = nullptr>
+	CaffBlocks getBlocks(Iterator& begin, Iterator& end);
 
 	template <typename Iterator, is_forward_iterator<Iterator> = nullptr>
 	uint64_t readLong(Iterator& iterator);
@@ -144,12 +147,9 @@ namespace CaffImport {
 	std::pair<duration_t, Ciff> parseCaffAnimBlock(Block& caffAnimBlock);
 	Caff parseCaffBlocks(CaffBlocks rc);
 
-	Caff importCaff(std::string filepath);
-	Caff importCaff(std::istream& is);
+	Caff importCaff(std::vector<unsigned char>& bytes);
 
 };
-
-std::istream& operator>>(std::istream& is, CaffImport::CaffBlocks& rawCaff);
 
 //---------------------------------------------------------------------------
 #endif

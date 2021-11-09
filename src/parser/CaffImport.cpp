@@ -4,22 +4,46 @@
 
 using namespace CaffImport;
 
-
 __declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
-	std::stringstream caffStream;
-	unsigned long long i;
-	for (i = 0; i < size; i++) {
-		caffStream << caffBytes[i];
+
+	std::vector<unsigned char> bytes;
+	for (uint64_t i = 0; i < size; i++) {
+		bytes.push_back(caffBytes[i]);
 	}
-	auto caff = importCaff(caffStream);
-	char* json = convertCaffToJson(caff);
-	return json;
+
+	try{
+		auto caff = importCaff(bytes);
+		char* json = convertCaffToJson(caff);
+		return json;
+	}
+	catch (ParserException& e) {
+		Logger::exception(e);
+		throw e;
+	}
 }
 
 __declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath) {
-	auto caff = importCaff(filepath);
-	char* json = convertCaffToJson(caff);
-	return json;
+
+	std::ifstream caffStream(filepath, std::ios::binary);
+
+	if (!caffStream.is_open()) {
+		throw ParserException("Filepath " + std::string(filepath) + " could not be opened");
+	}
+	std::vector<unsigned char> bytes;
+	unsigned char c;
+	while (caffStream.read(reinterpret_cast<char*>(&c), 1)) {
+		bytes.push_back(c);
+	}
+
+	try {
+		auto caff = importCaff(bytes);
+		char* json = convertCaffToJson(caff);
+		return json;
+	}
+	catch (ParserException& e) {
+		Logger::exception(e);
+		throw e;
+	}
 }
 
 __declspec(dllexport) void __stdcall freeNativeMem(char* address) {
@@ -92,25 +116,30 @@ char* CaffImport::convertCaffToJson(Caff& caff) {
 		}
 		json += "],";
 
-		json += "\"pixels\":[";
-		for (auto rowIter = ciff.second.pixels.begin(); rowIter < ciff.second.pixels.end(); rowIter++) {
-			json += "[";
-			for (auto colIter = rowIter->begin(); colIter != rowIter->end(); colIter++) {
+		if (ciff.second.pixels.size() != 0 && ciff.second.pixels[0].size() != 0) {
+			json += "\"pixels\":[";
+			for (auto rowIter = ciff.second.pixels.begin(); rowIter < ciff.second.pixels.end(); rowIter++) {
 				json += "[";
+				for (auto colIter = rowIter->begin(); colIter != rowIter->end(); colIter++) {
+					json += "[";
 
-				json += std::to_string(colIter->r);
-				json += ",";
-				json += std::to_string(colIter->g);
-				json += ",";
-				json += std::to_string(colIter->b);
+					json += std::to_string(colIter->r);
+					json += ",";
+					json += std::to_string(colIter->g);
+					json += ",";
+					json += std::to_string(colIter->b);
 
+					json += "],";
+				}
+				json.pop_back();
 				json += "],";
 			}
+
 			json.pop_back();
-			json += "],";
+			json += "]},";
 		}
-		json.pop_back();
-		json += "]},";
+		else
+			json += "},";
 	}
 
 	json.pop_back();
@@ -125,87 +154,74 @@ char* CaffImport::convertCaffToJson(Caff& caff) {
 	return retArray;
 }
 
-Caff CaffImport::importCaff(std::istream& is) {
-	Logger::message("Reading file from stream");
-	try {
-		auto caffBlocks = readCaffBlocks(is);
-		Logger::message("Reading file from istream successful");
-		return parseCaffBlocks(caffBlocks);
-	}
-	catch (ParserException e) {
-		Logger::exception(e);
-		throw e;
-	}
+Caff CaffImport::importCaff(std::vector<unsigned char>& bytes) {
+	Logger::message("Reading caff from vector");
+	auto caffBlocks = readCaffBlocks(bytes);
+	return parseCaffBlocks(caffBlocks);
+
 }
 
 
-
-Caff CaffImport::importCaff(std::string filepath) {
-	Logger::message("Reading file from path: " + filepath);
-	try {
-		auto caffBlocks = readCaffBlocks(filepath);
-		Logger::message("Reading file from path: " + filepath + " successful");
-		return parseCaffBlocks(caffBlocks);
-	}
-	catch (ParserException e) {
-		e.filepath = filepath;
-		Logger::exception(e);
-		throw e;
-	}
-}
-
-CaffBlocks CaffImport::readCaffBlocks(std::string filepath) {
-	std::ifstream caffFileStream(filepath.c_str(), std::ios::binary);
-
-	CaffBlocks retCaffBlocks;
-	if (caffFileStream.is_open()) {
-
-		retCaffBlocks = readCaffBlocks(caffFileStream);
-
-		caffFileStream.close();
-	}
-	return retCaffBlocks;
-}
-
-CaffBlocks CaffImport::readCaffBlocks(std::istream& caffStream) {
+CaffBlocks CaffImport::readCaffBlocks(std::vector<unsigned char>& bytes) {
 	CaffBlocks newCaff;
 
-	auto length = caffStream.rdbuf()->in_avail();
+
+	auto length = bytes.size();
 	if (length > pow(2, sizeof(void*) * 8) - 1) {
 		throw ParserException("System architecture doesn't support caff size of " + length);
 	}
 
-	caffStream >> newCaff;
+	auto begin = bytes.begin();
+	auto end = bytes.end();
+	newCaff = getBlocks(begin, end);
 
 	return newCaff;
 }
 
-std::istream& operator>>(std::istream& is, CaffBlocks& rawCaff) {
-	char idChar;
-	while (is.read(&idChar, 1)) {
-		is.putback(idChar);
-		rawCaff.getBlocks().emplace_back(Block{ is });
+template<typename Iterator, is_forward_iterator<Iterator>>
+CaffBlocks CaffImport::getBlocks(Iterator& begin, Iterator& end) {
+	CaffBlocks rawCaff;
+	rawCaff.getBlocks().emplace_back(Block(begin, end));
+	auto header = rawCaff.getBlocks()[0];
+	auto headerBegin = header.begin();
+	for (short i = 0; i < 12; i++) headerBegin++;
+
+	unsigned char buffer[8];
+	for (short i = 0; i < 8; i++) buffer[i] = *headerBegin++;
+	uint64_t supposedNumAnim = *(reinterpret_cast<uint64_t*>(buffer));
+	std::stringstream numAnimStream;
+	numAnimStream << supposedNumAnim;
+
+	while (begin != end) {
+		if (supposedNumAnim == rawCaff.getBlocks().size() - 2)
+			throw ParserException("Read " + numAnimStream.str() + " blocks, but there are bytes remaining");
+		rawCaff.getBlocks().emplace_back(Block{ begin, end });
 	}
-	return is;
+	return rawCaff;
 }
 
-Block::Block(std::istream& is) {
+template <typename Iterator, is_forward_iterator<Iterator>>
+Block::Block(Iterator& begin, Iterator& end) {
 	id = std::make_shared<unsigned char>();
-
-	is.read(reinterpret_cast<char*>(id.get()), 1);
-	is.read(reinterpret_cast<char*>(&length), 8);
-
+	*id = *begin++;
 	short idInt = (int)*id;
-	if (idInt != 1 && idInt != 2 && idInt != 3) {
+	if (idInt != 1 && idInt != 2 && idInt != 3)
 		throw ParserException("Id must be 1, 2 or 3.");
-	}
 
+	unsigned char buffer[8];
+
+	for (short i = 0; i < 8; i++) buffer[i] = *begin++;
+	length = *reinterpret_cast<uint64_t*>(buffer);
+
+	auto actLength = end - begin;
+	if (length > actLength)
+		throw ParserException("Length is bigger than actual length of iterators' difference");
 	data.resize(length);
-	//for(uint64_t i = 0; i < data.capacity(); i++) data.emplace_back(0);
 
-	is.read(reinterpret_cast<char*>(&data[0]), length);
+	for (uint64_t i = 0; i < length; i++) {
+		data[i] = *begin++;
+	}
 }
-
 
 CaffImport::Caff CaffImport::parseCaffBlocks(CaffBlocks rc) {
 	Caff caff;
