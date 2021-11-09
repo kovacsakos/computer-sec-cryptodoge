@@ -4,7 +4,7 @@
 
 using namespace CaffImport;
 
-__declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
+char* importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
 
 	std::vector<unsigned char> bytes;
 	for (uint64_t i = 0; i < size; i++) {
@@ -22,7 +22,7 @@ __declspec(dllexport) char* __stdcall importCaffAsJsonFromString(uint8_t* caffBy
 	}
 }
 
-__declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath) {
+char* importCaffAsJson(const char* filepath) {
 
 	std::ifstream caffStream(filepath, std::ios::binary);
 
@@ -46,7 +46,7 @@ __declspec(dllexport) char* __stdcall importCaffAsJson(const char* filepath) {
 	}
 }
 
-__declspec(dllexport) void __stdcall freeNativeMem(char* address) {
+void freeNativeMem(char* address) {
 	delete address;
 }
 

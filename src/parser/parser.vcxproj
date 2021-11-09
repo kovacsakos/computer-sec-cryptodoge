@@ -167,20 +167,20 @@
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='parserExe|x64'">
-    <NMakeBuildCommandLine>mingw32-make exe</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>mingw32-make exe-windows</NMakeBuildCommandLine>
     <NMakeOutput>parser.exe</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>mingw32-make clean-windows exe</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>mingw32-make clean-windows exe-windows</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;COMPILE_EXE;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>
     <PublicIncludeDirectories>$(SolutionDir)Include;$(PublicIncludeDirectories)</PublicIncludeDirectories>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='parserDll|x64'">
-    <NMakeBuildCommandLine>mingw32-make dll</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>mingw32-make dll-windows</NMakeBuildCommandLine>
     <NMakeOutput>parser.dll</NMakeOutput>
     <NMakeCleanCommandLine>mingw32-make clean-windows</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>mingw32-make clean-windows dll</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine>mingw32-make clean-windows dll-windows</NMakeReBuildCommandLine>
     <NMakePreprocessorDefinitions>NDEBUG;COMPILE_DLL;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <IncludePath>$(SolutionDir)Include;$(IncludePath);$(SolutionDir)Include;$(SolutionDir)Include</IncludePath>

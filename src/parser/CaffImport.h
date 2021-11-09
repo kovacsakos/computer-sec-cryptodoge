@@ -17,6 +17,7 @@
 #include <cmath>
 #include <iostream>
 
+#ifdef WINDOWS_BUILD
 #ifdef __cplusplus
 extern "C"
 {
@@ -29,7 +30,20 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
+#else
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
+	char* importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size);
+	char* importCaffAsJson(const char* filepath);
+	void freeNativeMem(char* address);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
 
 namespace CaffImport {
 
