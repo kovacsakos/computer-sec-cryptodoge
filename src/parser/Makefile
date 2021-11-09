@@ -1,40 +1,25 @@
-
-SSP:=-fstack-protector-all
 RELRO:=-Wl,-z,relro,-z,now
 FORTIFY_SOURCE:=-D_FORTIFY_SOURCE=2
 
-SEC_OPTIONS:= -fstack-protector-all -fstack-clash-protection -pie -fPIE -D_FORTIFY_SOURCE=2 -fcf-protection=full
+SEC_OPTIONS:= -pie -fPIC -fcf-protection=full
+# -fstack-protector-all -fstack-clash-protection -pie -fPIE -D_FORTIFY_SOURCE=2 -fcf-protection=full -fPIC
+LIB_FLAGS:= -shared -Wl,-add-stdcall-alias
 ARCH_64:= -m64
+SOURCE:= parser.cpp CaffImport.cpp CaffImport.h ParserException.cpp ParserException.h Logger.h Logger.cpp
 
-dll: parser_dll
 exe: parser_exe
+dll: parser_dll
+dll-windows: parser_dll_windows
+exe-windows: parser_exe_windows
 
-parser_dll: CaffImport_dll.o Logger.o ParserException.o parser_dll.o
-	g++ $(SEC_OPTIONS) $(ARCH_64) -o parser.dll parser.o CaffImport.o ParserException.o Logger.o
-
-parser_exe: CaffImport_exe.o Logger.o ParserException.o parser_exe.o
-	g++ $(SEC_OPTIONS) $(ARCH_64) -o parser.exe parser.o CaffImport.o ParserException.o Logger.o
-
-parser_dll.o: parser.cpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -D COMPILE_DLL -c -std=c++11 parser.cpp
-	
-parser_exe.o: parser.cpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -D COMPILE_EXE -c -std=c++11 parser.cpp
-	
-CaffImport_dll.o: CaffImport.cpp CaffImport.hpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -D COMPILE_DLL -c -std=c++11 CaffImport.cpp CaffImport.hpp
-
-
-CaffImport_exe.o: CaffImport.cpp CaffImport.hpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -D COMPILE_EXE -c -std=c++11 CaffImport.cpp CaffImport.hpp
-
-
-Logger.o: Logger.cpp Logger.hpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -c -std=c++11 Logger.cpp Logger.hpp
-
-ParserException.o: ParserException.cpp ParserException.hpp
-	g++ $(SEC_OPTIONS) $(ARCH_64) -c -std=c++11 ParserException.cpp ParserException.hpp
-
+parser_dll: 
+	g++ $(SEC_OPTIONS) $(LIB_FLAGS) -o parser.dll  $(SOURCE)
+parser_dll_windows:
+	g++ $(SEC_OPTIONS) -D WINDOWS_BUILD $(LIB_FLAGS) -o parser.dll  $(SOURCE)
+parser_exe:
+	g++ $(SEC_OPTIONS) -o parser.exe $(SOURCE)
+parser_exe_windows:
+	g++ $(SEC_OPTIONS) -D WINDOWS_BUILD -o parser.exe $(SOURCE)
 clean-windows:
 	-del -f parser.dll
 	-del -f *.o
@@ -43,4 +28,3 @@ clean-windows:
 clean-linux:
 	-rm -f parser.exe
 	-rm -f *.o
-	

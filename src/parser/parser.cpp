@@ -1,27 +1,9 @@
-//---------------------------------------------------------------------------
-#ifdef DO_NOT_INCLUDE
-#ifdef COMPILE_DLL
+#ifdef WINDOWS_BUILD
 #include <windows.h>
-//---------------------------------------------------------------------------
-int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
-{
-    return 1;
-}
-//---------------------------------------------------------------------------
-int WINAPI WinMain(
-    HINSTANCE hInstance,
-    HINSTANCE hPrevInstance,
-    LPSTR lpCmdLine,
-    int nCmdShow)
-{
-    return 0;
-}
 #endif
-#endif
-
 
 #include <iostream>
-#include "CaffImport.hpp"
+#include "CaffImport.h"
 
 int main() {
     std::string filename = "1.caff";
@@ -35,5 +17,6 @@ int main() {
     }
 
     //std::cout << CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size()) << std::endl;
-    CaffImport::importCaffAsJsonFromString(&chars.data()[0], chars.size());
+    importCaffAsJsonFromString(&chars.data()[0], chars.size());
 }
+

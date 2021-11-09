@@ -32,17 +32,20 @@
     <Text Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CaffImport.hpp">
+    <ClInclude Include="CaffImport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.hpp">
+    <ClInclude Include="Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ParserException.hpp">
+    <ClInclude Include="ParserException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="parser.dll" />
+    <None Include="1.caff" />
+    <None Include="2.caff" />
+    <None Include="3.caff" />
   </ItemGroup>
 </Project>
