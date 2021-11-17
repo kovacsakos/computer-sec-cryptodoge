@@ -1,4 +1,4 @@
-using CryptoDoge.ParserService.Models;
+using CryptoDoge.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;

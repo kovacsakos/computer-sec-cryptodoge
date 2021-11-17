@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CryptoDoge.ParserService.Models
+namespace CryptoDoge.Shared.Models
 {
     public class Ciff
     {
