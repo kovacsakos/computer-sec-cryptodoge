@@ -24,7 +24,7 @@ namespace CryptoDoge.Services.UnitTests
         }
 
         [Test]
-        public void SaveCaffImages()
+        public void SaveCaffImages_1caff()
         {
             Caff caff = parserService.GetCaffFromFile(@"TestData\1.caff");
             var fileNames = imagingService.SaveCaffImages(caff).ToList();
@@ -37,6 +37,19 @@ namespace CryptoDoge.Services.UnitTests
                 Assert.IsNotNull(caff.Ciffs.Find(c => fileName.Contains(c.Id)));
                 File.Delete(fileName);
             }
+        }
+
+        [Test]
+        public void SaveCaffImages_EmtpyCaff()
+        {
+            Caff caff = parserService.GetCaffFromFile(@"TestData\1.caff");
+            caff.Ciffs.Clear();
+            caff.Num_anim = 0;
+
+            var fileNames = imagingService.SaveCaffImages(caff).ToList();
+
+            Assert.AreEqual(caff.Num_anim, fileNames.Count);
+            Assert.IsEmpty(fileNames);
         }
     }
 }
