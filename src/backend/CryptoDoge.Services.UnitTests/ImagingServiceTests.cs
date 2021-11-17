@@ -27,14 +27,15 @@ namespace CryptoDoge.Services.UnitTests
         public void SaveCaffImages()
         {
             Caff caff = parserService.GetCaffFromFile(@"TestData\1.caff");
-            var filenames = imagingService.SaveCaffImages(caff).ToList();
+            var fileNames = imagingService.SaveCaffImages(caff).ToList();
 
-            Assert.AreEqual(caff.Num_anim, filenames.Count);
+            Assert.AreEqual(caff.Num_anim, fileNames.Count);
 
-            foreach (var item in filenames)
+            foreach (var fileName in fileNames)
             {
-                Assert.IsTrue(File.Exists(item));
-                File.Delete(item);
+                Assert.IsTrue(File.Exists(fileName));
+                Assert.IsNotNull(caff.Ciffs.Find(c => fileName.Contains(c.Id)));
+                File.Delete(fileName);
             }
         }
     }

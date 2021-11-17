@@ -6,12 +6,16 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Services
 {
+
+
     public class ImagingService : IImagingService
     {
         private readonly ILogger<ImagingService> logger;
@@ -45,28 +49,7 @@ namespace CryptoDoge.Services
         {
             using var loggerScope = new LoggerScope(logger);
             var pixels = ciff.Pixels;
-            using var bmp = new Bitmap(ciff.Width, ciff.Height);
-
-            #region unsafe
-            //BitmapData data = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            //int stride = data.Stride;
-
-            //unsafe
-            //{
-            //    byte* ptr = (byte*)data.Scan0;
-            //    for (int x = 0; x < pixels.Count; x++)
-            //    {
-            //        for (int y = 0; y < pixels[x].Count; y++)
-            //        {
-            //            var color = Color.FromArgb(pixels[x][y][0], pixels[x][y][1], pixels[x][y][2]);
-            //            ptr[(y * 3) + x * stride] = color.B;
-            //            ptr[(y * 3) + x * stride + 1] = color.G;
-            //            ptr[(y * 3) + x * stride + 2] = color.R;
-            //        }
-            //    }
-            //}
-            //bmp.UnlockBits(data); 
-            #endregion
+            using var bmp = new DirectBitmap(ciff.Width, ciff.Height);
 
             for (int x = 0; x < pixels.Count; x++)
             {
@@ -76,12 +59,12 @@ namespace CryptoDoge.Services
                 }
             }
 
-            var imageName = $"{Guid.NewGuid()}.png";
+            var imageName = $"{ciff.Id}.png";
             var path = Path.GetFullPath(BasePath);
             Directory.CreateDirectory(path);
 
             path = Path.Combine(path, imageName);
-            bmp.Save(path);
+            bmp.Bitmap.Save(path);
             return path;
         }
     }

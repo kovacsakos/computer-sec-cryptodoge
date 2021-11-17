@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CryptoDoge.Shared.Models
 {
     public class Ciff
     {
+        public string Id { get; set; }
+
         [DataMember(Name = "duration")]
         public int Duration { get; set; }
 
@@ -22,6 +25,11 @@ namespace CryptoDoge.Shared.Models
 
         [DataMember(Name = "pixels")]
         public List<List<List<int>>> Pixels { get; set; }
+
+        public Ciff()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
     }
 
 }
