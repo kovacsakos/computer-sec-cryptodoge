@@ -1,5 +1,5 @@
-﻿using CryptoDoge.ParserService.Models;
-using CryptoDoge.Shared;
+﻿using CryptoDoge.Shared;
+using CryptoDoge.Shared.Models;
 using Microsoft.Extensions.Logging;
 using SpanJson.Resolvers;
 using System;

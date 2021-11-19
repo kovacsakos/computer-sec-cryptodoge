@@ -1,4 +1,4 @@
-﻿using CryptoDoge.ParserService.Models;
+﻿using CryptoDoge.Shared.Models;
 using System.IO;
 
 namespace CryptoDoge.ParserService

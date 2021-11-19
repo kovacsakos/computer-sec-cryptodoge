@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoDoge.ParserService.Models
+namespace CryptoDoge.Shared.Models
 {
     public class Caff
     {
