@@ -49,7 +49,8 @@ namespace CryptoDoge.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(opt => opt.AddPolicy("AllowAny", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+            var allowedCorsOrigins = Configuration.GetSection("AllowedCorsOrigins").Value.Split(";");
+            services.AddCors(opt => opt.AddPolicy("CorsPolicy", builder => builder.WithOrigins(allowedCorsOrigins).AllowAnyMethod().AllowAnyHeader()));
 
             #region Identity
             services.AddIdentity<User, IdentityRole>(options =>
@@ -178,7 +179,7 @@ namespace CryptoDoge.Server
 
             app.UseRouting();
 
-            app.UseCors("AllowAny");
+            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
 
