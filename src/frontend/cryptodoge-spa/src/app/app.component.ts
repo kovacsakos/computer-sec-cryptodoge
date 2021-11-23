@@ -11,6 +11,7 @@ export class AppComponent {
   title = 'cryptodoge-spa';
 
   items: MenuItem[];
+  isLoggedIn: boolean;
 
   ngOnInit() {
     this.items = [
@@ -23,19 +24,29 @@ export class AppComponent {
         icon: 'pi pi-fw pi-search',
         label: 'Search',
         routerLink: ['/search']
-      },
+      }
+    ];
+
+    if (this.isLoggedIn) { this.items.push(
       {
         label: 'Profile',
         icon: 'pi pi-fw pi-user',
-        items: [{
-          label: 'Login',
-          routerLink: ['/login']
-        },
+        routerLink: ['/profile']
+      })}
+    else {
+      this.items.push(
         {
-          label: 'Register',
-          routerLink: ['/register']
-        }]
-      }
-    ];
+          label: 'Profile',
+          icon: 'pi pi-fw pi-user',
+          items: [{
+            label: 'Login',
+            routerLink: ['/login']
+          },
+          {
+            label: 'Register',
+            routerLink: ['/register']
+          }]
+        })
+    }
   }
 }
