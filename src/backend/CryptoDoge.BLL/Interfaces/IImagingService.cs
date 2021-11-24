@@ -1,7 +1,7 @@
 ﻿using CryptoDoge.Shared.Models;
 using System.Collections.Generic;
 
-namespace CryptoDoge.Services
+namespace CryptoDoge.BLL.Interfaces
 {
     public interface IImagingService
     {

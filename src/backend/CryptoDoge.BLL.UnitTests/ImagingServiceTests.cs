@@ -1,3 +1,5 @@
+using CryptoDoge.BLL.Interfaces;
+using CryptoDoge.BLL.Services;
 using CryptoDoge.ParserService;
 using CryptoDoge.Services.UnitTests.Helpers;
 using CryptoDoge.Shared.Models;
@@ -9,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace CryptoDoge.Services.UnitTests
+namespace CryptoDoge.BLL.UnitTests
 {
     public class ImagingServiceTests
     {
@@ -18,7 +20,7 @@ namespace CryptoDoge.Services.UnitTests
 
         public ImagingServiceTests()
         {
-            var myConfiguration = new Dictionary<string, string> {{"Imaging:BasePath", "images"}};
+            var myConfiguration = new Dictionary<string, string> { { "Imaging:BasePath", "images" } };
             var configuration = new ConfigurationBuilder().AddInMemoryCollection(myConfiguration).Build();
             imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration);
         }
@@ -35,7 +37,7 @@ namespace CryptoDoge.Services.UnitTests
             {
                 Assert.IsTrue(File.Exists(fileName));
                 Assert.IsNotNull(caff.Ciffs.Find(c => fileName.Contains(c.Id)));
-                File.Delete(fileName);
+                //File.Delete(fileName);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using CryptoDoge.Shared;
+﻿using CryptoDoge.BLL.Interfaces;
+using CryptoDoge.Shared;
 using CryptoDoge.Shared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -12,10 +13,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace CryptoDoge.Services
+namespace CryptoDoge.BLL.Services
 {
-
-
     public class ImagingService : IImagingService
     {
         private readonly ILogger<ImagingService> logger;
