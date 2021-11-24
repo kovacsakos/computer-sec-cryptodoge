@@ -17,11 +17,12 @@ namespace CryptoDoge.BLL.UnitTests
     {
         private readonly IImagingService imagingService;
         private readonly IParserService parserService = new ParserService.ParserService(Mock.Of<ILogger<ParserService.ParserService>>());
+        private readonly IConfiguration configuration;
 
         public ImagingServiceTests()
         {
-            var myConfiguration = new Dictionary<string, string> { { "Imaging:BasePath", "images" } };
-            var configuration = new ConfigurationBuilder().AddInMemoryCollection(myConfiguration).Build();
+            var configValues = new Dictionary<string, string> { { "Imaging:BasePath", "images" } };
+            configuration = new ConfigurationBuilder().AddInMemoryCollection(configValues).Build();
             imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration);
         }
 
@@ -33,11 +34,12 @@ namespace CryptoDoge.BLL.UnitTests
 
             Assert.AreEqual(caff.Num_anim, fileNames.Count);
 
+            var basePath = Path.GetFullPath(configuration["Imaging:BasePath"]);
             foreach (var fileName in fileNames)
             {
-                Assert.IsTrue(File.Exists(fileName));
+                Assert.IsTrue(File.Exists(Path.Combine(basePath, fileName)));
                 Assert.IsNotNull(caff.Ciffs.Find(c => fileName.Contains(c.Id)));
-                //File.Delete(fileName);
+                File.Delete(fileName);
             }
         }
 

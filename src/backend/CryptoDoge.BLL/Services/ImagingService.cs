@@ -64,7 +64,7 @@ namespace CryptoDoge.BLL.Services
 
             path = Path.Combine(path, imageName);
             bmp.Bitmap.Save(path);
-            return path;
+            return imageName;
         }
     }
 }
