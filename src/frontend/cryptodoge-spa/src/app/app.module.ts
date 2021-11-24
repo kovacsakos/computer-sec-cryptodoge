@@ -11,16 +11,17 @@ import {CardModule} from 'primeng/card';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { SearchComponent } from './components/search/search.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import {PaginatorModule} from 'primeng/paginator';
+import {PanelModule} from 'primeng/panel';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    SearchComponent,
     HomeComponent,
     ProfileComponent
   ],
@@ -31,7 +32,10 @@ import { ProfileComponent } from './components/profile/profile.component';
     FormsModule,
     MenubarModule,
     AutoCompleteModule,
-    CardModule
+    CardModule,
+    PaginatorModule,
+    PanelModule,
+    BrowserAnimationsModule
   ],
   providers: [{ provide: BASE_PATH, useValue: environment.baseUrl }],
   bootstrap: [AppComponent]

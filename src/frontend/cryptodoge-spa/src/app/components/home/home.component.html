@@ -1,1 +1,8 @@
-<p>home works!</p>
+<p-card class="card">
+    <i class="pi pi-search"></i>
+    <p-autoComplete class="m-5" [(ngModel)]="searchValue" [suggestions]="tags" (completeMethod)="search($event)" [multiple]="true"></p-autoComplete>
+    <p-panel header="Results">
+        Content
+    </p-panel>
+    <p-paginator [rows]="10" [totalRecords]="120" [rowsPerPageOptions]="[10,20,30]"></p-paginator>
+</p-card>

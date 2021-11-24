@@ -18,12 +18,7 @@ export class AppComponent {
       {
         label: 'Home',
         icon: 'pi pi-fw pi-home',
-        routerLink: ['/']
-      },
-      {
-        icon: 'pi pi-fw pi-search',
-        label: 'Search',
-        routerLink: ['/search']
+        routerLink: ['']
       }
     ];
 
