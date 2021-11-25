@@ -181,10 +181,16 @@ namespace CryptoDoge.Server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CryptoDoge.Server v1"));
             }
 
+            var imagesPath = Configuration["Imaging:BasePath"];
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.GetFullPath(Configuration["Imaging:BasePath"])),
-                RequestPath = "/images"
+                FileProvider = new PhysicalFileProvider(Path.GetFullPath(imagesPath)),
+                RequestPath = "/images",
             });
 
             app.UseRouting();

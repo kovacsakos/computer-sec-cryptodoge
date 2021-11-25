@@ -1,4 +1,5 @@
-﻿using CryptoDoge.ParserService;
+﻿using CryptoDoge.BLL.Dtos;
+using CryptoDoge.ParserService;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,6 +7,8 @@ namespace CryptoDoge.BLL.Interfaces
 {
     public interface IImagingService
     {
-        Task<IEnumerable<string>> SaveCaffImagesAsync(ParsedCaff parsedCaff);
+        Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff);
+        public Task<CaffDto> GetCaffByIdAsync(string id);
+        Task DeleteCaffImagesAsync(string id);
     }
 }

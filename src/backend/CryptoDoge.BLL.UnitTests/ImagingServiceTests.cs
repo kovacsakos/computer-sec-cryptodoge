@@ -57,22 +57,22 @@ namespace CryptoDoge.BLL.UnitTests
         public async Task SaveCaffImages_1caffAsync()
         {
             ParsedCaff caff = parserService.GetCaffFromFile(@"TestData\1.caff");
-            var fileNames = (await imagingService.SaveCaffImagesAsync(caff)).ToList();
+            var savedCaff = await imagingService.SaveCaffImagesAsync(caff);
 
-            Assert.AreEqual(caff.Num_anim, fileNames.Count);
+            Assert.AreEqual(caff.Num_anim, savedCaff.NumberOfAnimations);
 
             var basePath = Path.GetFullPath(configuration["Imaging:BasePath"]);
-            foreach (var fileName in fileNames)
+            foreach (var ciff in savedCaff.Ciffs)
             {
-                var fullPath = Path.Combine(basePath, fileName);
+                var fullPath = Path.Combine(basePath, $"{ciff.Id}.png");
                 Assert.IsTrue(File.Exists(fullPath));
-                Assert.IsNotNull(caff.Ciffs.Find(c => fileName.Contains(c.Id)));
+                Assert.IsNotNull(caff.Ciffs.Find(c => ciff.Id == c.Id));
                 File.Delete(fullPath);
             }
 
             var savedCaffs = await dbContext.Caffs.Include(c => c.Ciffs).ThenInclude(ci => ci.Tags).ToListAsync();
             Assert.AreEqual(1, savedCaffs.Count);
-            CollectionAssert.AreEquivalent(fileNames, savedCaffs[0].Ciffs.Select(ci => $"{ci.Id}.png"));
+            CollectionAssert.AreEquivalent(savedCaff.Ciffs.Select(x => x.Id), savedCaffs[0].Ciffs.Select(ci => ci.Id));
             ValidateCaff(savedCaffs[0]);
         }
 
@@ -83,10 +83,10 @@ namespace CryptoDoge.BLL.UnitTests
             caff.Ciffs.Clear();
             caff.Num_anim = 0;
 
-            var fileNames = (await imagingService.SaveCaffImagesAsync(caff)).ToList();
+            var savedCaff = await imagingService.SaveCaffImagesAsync(caff);
 
-            Assert.AreEqual(caff.Num_anim, fileNames.Count);
-            Assert.IsEmpty(fileNames);
+            Assert.AreEqual(caff.Num_anim, savedCaff.NumberOfAnimations);
+            Assert.IsEmpty(savedCaff.Ciffs);
 
             var savedCaffs = await dbContext.Caffs.Include(c => c.Ciffs).ThenInclude(ci => ci.Tags).ToListAsync();
             Assert.AreEqual(1, savedCaffs.Count);

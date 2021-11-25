@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Interfaces;
@@ -8,12 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Services
@@ -21,7 +19,6 @@ namespace CryptoDoge.BLL.Services
     public class ImagingService : IImagingService
     {
         private readonly ILogger<ImagingService> logger;
-        private readonly IConfiguration configuration;
         private readonly string BasePath = string.Empty;
         private readonly ICaffRepository caffRepository;
         private readonly IMapper mapper;
@@ -29,14 +26,12 @@ namespace CryptoDoge.BLL.Services
         public ImagingService(ILogger<ImagingService> logger, IConfiguration configuration, ICaffRepository caffRepository, IMapper mapper)
         {
             this.logger = logger;
-            this.configuration = configuration;
-
             BasePath = configuration["Imaging:BasePath"];
             this.caffRepository = caffRepository;
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<string>> SaveCaffImagesAsync(ParsedCaff parsedCaff)
+        public async Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff)
         {
             using var loggerScope = new LoggerScope(logger);
 
@@ -47,7 +42,7 @@ namespace CryptoDoge.BLL.Services
             if (ciffs.Count == 0)
             {
                 await caffRepository.AddNewCaffAsync(newCaff);
-                return Enumerable.Empty<string>();
+                return await GetCaffByIdAsync(newCaff.Id);
             }
 
             var newCiffs = new ConcurrentBag<Ciff>();
@@ -55,7 +50,14 @@ namespace CryptoDoge.BLL.Services
 
             newCaff.Ciffs = newCiffs.ToList();
             await caffRepository.AddNewCaffAsync(newCaff);
-            return newCiffs.Select(c => $"{c.Id}.png");
+            return await GetCaffByIdAsync(newCaff.Id);
+        }
+
+        public async Task<CaffDto> GetCaffByIdAsync(string id)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(id);
+            return mapper.Map<CaffDto>(caff);
         }
 
         private Ciff SaveCiff(ParsedCiff parsedCiff)
@@ -74,7 +76,6 @@ namespace CryptoDoge.BLL.Services
 
             var imageName = $"{parsedCiff.Id}.png";
             var path = Path.GetFullPath(BasePath);
-            Directory.CreateDirectory(path);
 
             path = Path.Combine(path, imageName);
             bmp.Bitmap.Save(path);
@@ -83,6 +84,24 @@ namespace CryptoDoge.BLL.Services
             newCiff.Id = parsedCiff.Id;
 
             return newCiff;
+        }
+
+        public async Task DeleteCaffImagesAsync(string id)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await GetCaffByIdAsync(id);
+
+            if (caff != null)
+            {
+                var path = Path.GetFullPath(BasePath);
+                foreach (var ciff in caff.Ciffs)
+                {
+                    var imageName = $"{ciff.Id}.png";
+                    var imagePath = Path.Combine(path, imageName);
+                    File.Delete(imagePath);
+                }
+            }
+            await caffRepository.DeleteCaffAsync(id);
         }
     }
 }
