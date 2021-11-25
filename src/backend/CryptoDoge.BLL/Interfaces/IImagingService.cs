@@ -1,10 +1,11 @@
-﻿using CryptoDoge.Shared.Models;
+﻿using CryptoDoge.ParserService;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Interfaces
 {
     public interface IImagingService
     {
-        IEnumerable<string> SaveCaffImages(Caff caff);
+        Task<IEnumerable<string>> SaveCaffImagesAsync(ParsedCaff parsedCaff);
     }
 }

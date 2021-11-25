@@ -1,4 +1,3 @@
-using CryptoDoge.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -70,7 +69,7 @@ namespace CryptoDoge.ParserService.UnitTests
             ValidateCaff(caff);
         }
 
-        private void ValidateCaff(Caff caff)
+        private void ValidateCaff(ParsedCaff caff)
         {
             Assert.AreEqual("Test Creator", caff.Creator);
             Assert.AreEqual(2, caff.Num_anim);

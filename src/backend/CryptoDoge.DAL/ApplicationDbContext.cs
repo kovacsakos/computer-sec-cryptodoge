@@ -14,6 +14,11 @@ namespace CryptoDoge.DAL
 	{
 
 		public override DbSet<User> Users { get; set; }
+        public DbSet<Caff> Caffs { get; set; }
+        public DbSet<Ciff> Ciffs { get; set; }
+        public DbSet<CiffTag> CiffTags { get; set; }
+        public DbSet<CaffComment> CaffComments { get; set; }
+        
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

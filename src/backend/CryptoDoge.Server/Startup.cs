@@ -144,6 +144,7 @@ namespace CryptoDoge.Server
 
             services.AddTransient<IAuthAppService, AuthAppService>();
             services.AddTransient<ITokenAppService, TokenAppService>();
+            services.AddTransient<ICaffRepository, CaffRepository>();
             services.AddTransient<IAuthRepository, AuthRepository>();
             services.AddTransient<IImagingService, ImagingService>();
 

@@ -1,5 +1,4 @@
 ﻿using CryptoDoge.Shared;
-using CryptoDoge.Shared.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;

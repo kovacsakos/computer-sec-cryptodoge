@@ -1,5 +1,5 @@
 ﻿using CryptoDoge.Shared;
-using CryptoDoge.Shared.Models;
+
 using Microsoft.Extensions.Logging;
 using SpanJson.Resolvers;
 using System;
@@ -30,7 +30,7 @@ namespace CryptoDoge.ParserService
             this.logger = logger;
         }
 
-        public Caff GetCaffFromFile(string filePath)
+        public ParsedCaff GetCaffFromFile(string filePath)
         {
             using var loggerScope = new LoggerScope(logger);
             if (!File.Exists(filePath))
@@ -45,7 +45,7 @@ namespace CryptoDoge.ParserService
             {
                 textPtr = importCaffAsJson(filePath);
                 string json = Marshal.PtrToStringAnsi(textPtr);
-                return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<Caff>(Encoding.UTF8.GetBytes(json));
+                return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<ParsedCaff>(Encoding.UTF8.GetBytes(json));
             }
             catch (Exception e)
             {
@@ -61,14 +61,14 @@ namespace CryptoDoge.ParserService
             }
         }
 
-        public Caff GetCaffFromMemoryStream(MemoryStream caffMemoryStream)
+        public ParsedCaff GetCaffFromMemoryStream(MemoryStream caffMemoryStream)
         {
             using var loggerScope = new LoggerScope(logger);
             var buffer = caffMemoryStream.ToArray();
             return GetCaffFromByteArray(buffer);
         }
 
-        public Caff GetCaffFromByteArray(byte[] buffer)
+        public ParsedCaff GetCaffFromByteArray(byte[] buffer)
         {
             using var loggerScope = new LoggerScope(logger);
             if (buffer.Length == 0)
@@ -90,7 +90,7 @@ namespace CryptoDoge.ParserService
                 textPtr = importCaffAsJsonFromString(pnt, buffer.Length);
                 string json = Marshal.PtrToStringAnsi(textPtr);
 
-                return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<Caff>(Encoding.UTF8.GetBytes(json));
+                return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<ParsedCaff>(Encoding.UTF8.GetBytes(json));
             }
             catch (Exception e)
             {

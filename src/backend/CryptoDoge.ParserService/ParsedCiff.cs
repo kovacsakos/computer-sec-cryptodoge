@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace CryptoDoge.Shared.Models
+namespace CryptoDoge.ParserService
 {
-    public class Ciff
+    public class ParsedCiff
     {
         public string Id { get; set; }
 
@@ -26,7 +26,7 @@ namespace CryptoDoge.Shared.Models
         [DataMember(Name = "pixels")]
         public List<List<List<int>>> Pixels { get; set; }
 
-        public Ciff()
+        public ParsedCiff()
         {
             Id = Guid.NewGuid().ToString();
         }

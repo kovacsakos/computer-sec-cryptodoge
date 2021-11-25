@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.12" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="Moq" Version="4.16.1" />
@@ -17,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CryptoDoge.BLL\CryptoDoge.BLL.csproj" />
+    <ProjectReference Include="..\CryptoDoge.DAL\CryptoDoge.DAL.csproj" />
     <ProjectReference Include="..\CryptoDoge.ParserService\CryptoDoge.ParserService.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Exceptions;
+using CryptoDoge.ParserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,11 +17,24 @@ namespace CryptoDoge.Server.Controllers
 	public class AuthController : ControllerBase
 	{
 		private readonly IAuthAppService authService;
+        private readonly IImagingService imagingService;
+        private readonly IParserService parserService;
 
-		public AuthController(IAuthAppService authService)
+        public AuthController(IAuthAppService authService, IImagingService imagingService, IParserService parserService)
 		{
 			this.authService = authService;
-		}
+            this.imagingService = imagingService;
+            this.parserService = parserService;
+        }
+
+		[AllowAnonymous]
+		[HttpGet("Upload")]
+		public async Task<ActionResult<IEnumerable<string>>> Upload()
+        {
+			var caff = parserService.GetCaffFromFile(@"C:\Users\Akos\Desktop\Suli\MSC_Felev2\computer-sec\computer-sec-cryptodoge\src\backend\CryptoDoge.ParserService.UnitTests\TestData\1.caff");
+			var paths = imagingService.SaveCaffImagesAsync(caff);
+			return Ok(paths);
+        }
 
 		[AllowAnonymous]
 		[HttpPost("login")]
