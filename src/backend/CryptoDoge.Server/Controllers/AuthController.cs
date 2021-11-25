@@ -1,6 +1,7 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Exceptions;
+using CryptoDoge.ParserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,11 +17,11 @@ namespace CryptoDoge.Server.Controllers
 	public class AuthController : ControllerBase
 	{
 		private readonly IAuthAppService authService;
-
-		public AuthController(IAuthAppService authService)
+        
+        public AuthController(IAuthAppService authService)
 		{
 			this.authService = authService;
-		}
+        }
 
 		[AllowAnonymous]
 		[HttpPost("login")]

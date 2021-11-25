@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoDoge.Shared.Models
+namespace CryptoDoge.ParserService
 {
-    public class Caff
+    public class ParsedCaff
     {
         [DataMember(Name = "num_anim")]
         public int Num_anim { get; set; }
@@ -31,7 +31,7 @@ namespace CryptoDoge.Shared.Models
         public string Creator { get; set; }
 
         [DataMember(Name = "ciffs")]
-        public List<Ciff> Ciffs { get; set; }
+        public List<ParsedCiff> Ciffs { get; set; }
 
         public DateTime CreationDate
         {

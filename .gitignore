@@ -400,3 +400,5 @@ FodyWeavers.xsd
 /src/parser/CaffImport.hpp.gch
 /src/parser/parserExe.o
 /src/parser/parser.exe
+
+/src/backend/CryptoDoge.Server/images
