@@ -12,6 +12,7 @@ namespace CryptoDoge.Model.Interfaces
         public Task AddNewCaffAsync(Caff caff);
         public Task<IEnumerable<Caff>> GetCaffsAsync();
         public Task<Caff> GetCaffByIdAsync(string caffId);
-        public Task DeleteCaffAsync(string caffId);
+        public Task DeleteCaffAsync(Caff caff);
+        public Task AddComment(CaffComment caffComment);
     }
 }

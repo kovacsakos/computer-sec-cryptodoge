@@ -37,13 +37,15 @@ namespace CryptoDoge.DAL.Repositories
                 .SingleOrDefaultAsync(c => c.Id == caffId);
         }
 
-        public async Task DeleteCaffAsync(string caffId)
+        public async Task DeleteCaffAsync(Caff caff)
         {
-            var caff = await GetCaffByIdAsync(caffId);
-            if (caff != null)
-            {
-                dbContext.Remove(caff);
-            }
+            dbContext.Remove(caff);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task AddComment(CaffComment caffComment)
+        {
+            await dbContext.CaffComments.AddAsync(caffComment);
             await dbContext.SaveChangesAsync();
         }
     }

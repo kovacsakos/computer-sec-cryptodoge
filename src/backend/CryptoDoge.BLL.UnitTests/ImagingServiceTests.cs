@@ -28,6 +28,7 @@ namespace CryptoDoge.BLL.UnitTests
         private readonly IMapper mapper;
         private ApplicationDbContext dbContext;
         private ICaffRepository caffRepo;
+        private User user;
 
         public ImagingServiceTests()
         {
@@ -51,13 +52,15 @@ namespace CryptoDoge.BLL.UnitTests
             await dbContext.Database.EnsureDeletedAsync();
             caffRepo = new CaffRepository(dbContext);
             imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration, caffRepo, mapper);
+
+            user = new User { Id = "c193a1f7-0000-0000-0000-976f4811bf5f" };
         }
 
         [Test]
         public async Task SaveCaffImages_1caffAsync()
         {
             ParsedCaff caff = parserService.GetCaffFromFile(@"TestData\1.caff");
-            var savedCaff = await imagingService.SaveCaffImagesAsync(caff);
+            var savedCaff = await imagingService.SaveCaffImagesAsync(caff, user);
 
             Assert.AreEqual(caff.Num_anim, savedCaff.NumberOfAnimations);
 
@@ -83,7 +86,7 @@ namespace CryptoDoge.BLL.UnitTests
             caff.Ciffs.Clear();
             caff.Num_anim = 0;
 
-            var savedCaff = await imagingService.SaveCaffImagesAsync(caff);
+            var savedCaff = await imagingService.SaveCaffImagesAsync(caff, user);
 
             Assert.AreEqual(caff.Num_anim, savedCaff.NumberOfAnimations);
             Assert.IsEmpty(savedCaff.Ciffs);

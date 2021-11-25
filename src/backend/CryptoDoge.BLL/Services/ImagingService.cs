@@ -2,6 +2,7 @@
 using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Entities;
+using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
 using CryptoDoge.ParserService;
 using CryptoDoge.Shared;
@@ -31,7 +32,7 @@ namespace CryptoDoge.BLL.Services
             this.mapper = mapper;
         }
 
-        public async Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff)
+        public async Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff, User user)
         {
             using var loggerScope = new LoggerScope(logger);
 
@@ -60,6 +61,42 @@ namespace CryptoDoge.BLL.Services
             return mapper.Map<CaffDto>(caff);
         }
 
+        public async Task DeleteCaffImagesAsync(string id, User user)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(id);
+
+            if (caff != null)
+            {
+                var path = Path.GetFullPath(BasePath);
+                foreach (var ciff in caff.Ciffs)
+                {
+                    var imageName = $"{ciff.Id}.png";
+                    var imagePath = Path.Combine(path, imageName);
+                    File.Delete(imagePath);
+                }
+
+                await caffRepository.DeleteCaffAsync(caff);
+            }
+        }
+
+        public async Task CommentOnCaff(CaffCommentDto caffCommentDto, User user)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(caffCommentDto.CaffId);
+            if (caff != null)
+            {
+                await caffRepository.AddComment(new CaffComment
+                {
+                    Comment = caffCommentDto.Comment,
+                });
+            } 
+            else
+            {
+                throw new NotFoundException("Caff does not exists.", 404);
+            }
+        }
+
         private Ciff SaveCiff(ParsedCiff parsedCiff)
         {
             using var loggerScope = new LoggerScope(logger);
@@ -84,24 +121,6 @@ namespace CryptoDoge.BLL.Services
             newCiff.Id = parsedCiff.Id;
 
             return newCiff;
-        }
-
-        public async Task DeleteCaffImagesAsync(string id)
-        {
-            using var loggerScope = new LoggerScope(logger);
-            var caff = await GetCaffByIdAsync(id);
-
-            if (caff != null)
-            {
-                var path = Path.GetFullPath(BasePath);
-                foreach (var ciff in caff.Ciffs)
-                {
-                    var imageName = $"{ciff.Id}.png";
-                    var imagePath = Path.Combine(path, imageName);
-                    File.Delete(imagePath);
-                }
-            }
-            await caffRepository.DeleteCaffAsync(id);
         }
     }
 }

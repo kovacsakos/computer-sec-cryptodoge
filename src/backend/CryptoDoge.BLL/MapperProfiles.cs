@@ -25,7 +25,8 @@ namespace CryptoDoge.BLL
 
 			CreateMap<Caff, CaffDto>()
 				.ForMember(d => d.Captions, s => s.MapFrom(x => x.Ciffs.Select(y => y.Caption).Distinct()))
-				.ForMember(d => d.Tags, s => s.MapFrom(x => x.Ciffs.SelectMany(y => y.Tags).Select(x => x.Value).Distinct()));
+				.ForMember(d => d.Tags, s => s.MapFrom(x => x.Ciffs.SelectMany(y => y.Tags).Select(x => x.Value).Distinct()))
+				.ForMember(d => d.UploadedBy, s => s.MapFrom(x => x.UploadedBy.Id));
 		}
 
 		public class StringToCiffTagConverter : ITypeConverter<string, CiffTag>

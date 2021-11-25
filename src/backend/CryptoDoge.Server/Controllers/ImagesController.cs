@@ -1,13 +1,12 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
-using CryptoDoge.Model.Entities;
 using CryptoDoge.ParserService;
+using CryptoDoge.Server.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Server.Controllers
@@ -18,11 +17,13 @@ namespace CryptoDoge.Server.Controllers
     {
         private readonly IParserService parserService;
         private readonly IImagingService imagingService;
+        private readonly IdentityService identityService;
 
-        public ImagesController(IParserService parserService, IImagingService imagingService)
+        public ImagesController(IParserService parserService, IImagingService imagingService, IdentityService identityService)
         {
             this.parserService = parserService ?? throw new ArgumentNullException(nameof(parserService));
             this.imagingService = imagingService ?? throw new ArgumentNullException(nameof(imagingService));
+            this.identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
 
         [HttpGet("{id}")]
@@ -33,7 +34,6 @@ namespace CryptoDoge.Server.Controllers
             {
                 return Ok(caff);
             }
-
             return NotFound();
         }
 
@@ -47,7 +47,8 @@ namespace CryptoDoge.Server.Controllers
                 caffStream.Position = 0;
 
                 var caff = parserService.GetCaffFromMemoryStream(caffStream);
-                var result = await imagingService.SaveCaffImagesAsync(caff);
+                var currentUser = await identityService.GetCurrentUserAsync();
+                var result = await imagingService.SaveCaffImagesAsync(caff, currentUser);
 
                 return Ok(result);
             } 
@@ -58,10 +59,29 @@ namespace CryptoDoge.Server.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "RequireLogin")]
         public async Task<ActionResult> Delete(string id)
         {
-            await imagingService.DeleteCaffImagesAsync(id);
+            var currentUser = await identityService.GetCurrentUserAsync();
+            await imagingService.DeleteCaffImagesAsync(id, currentUser);
             return NoContent();
+        }
+
+        [HttpPost("comment")]
+        [Authorize(Policy = "RequireLogin")]
+        public async Task<ActionResult> Comment([FromBody] CaffCommentDto caffCommentDto)
+        {
+            try
+            {
+                var currentUser = await identityService.GetCurrentUserAsync();
+                await imagingService.CommentOnCaff(caffCommentDto, currentUser);
+                return Ok();
+            } 
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }

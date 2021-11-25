@@ -24,6 +24,8 @@ namespace CryptoDoge.Model.Entities
 
         public string Creator { get; set; }
 
+        public User UploadedBy { get; set; }
+
         public ICollection<Ciff> Ciffs { get; set; }
         public ICollection<CaffComment> Comments { get; set; }
 
