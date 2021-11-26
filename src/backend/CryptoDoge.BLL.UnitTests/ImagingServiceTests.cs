@@ -34,6 +34,7 @@ namespace CryptoDoge.BLL.UnitTests
         private User user;
         private ParsedCaff parsedCaff;
         private const string Comment = "Comment about something";
+        private string BasePath;
 
         public ImagingServiceTests()
         {
@@ -59,20 +60,26 @@ namespace CryptoDoge.BLL.UnitTests
             imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration, caffRepository, mapper);
             parsedCaff = parserService.GetCaffFromFile(@"TestData\1.caff");
             user = new User { Id = "c193a1f7-0000-0000-0000-976f4811bf5f" };
+
+            BasePath = Path.GetFullPath(configuration["Imaging:BasePath"]);
+            if (!Directory.Exists(BasePath))
+            {
+                Directory.CreateDirectory(BasePath);
+            }
         }
+
+        [TearDown]
+        public void GlobalTeardown() => Directory.Delete(BasePath, recursive: true);
 
         [Test]
         public async Task SaveCaffImages_1caffAsync()
-        {
-            
+        {       
             var savedCaff = await imagingService.SaveCaffImagesAsync(parsedCaff, user);
-
             Assert.AreEqual(parsedCaff.Num_anim, savedCaff.NumberOfAnimations);
 
-            var basePath = Path.GetFullPath(configuration["Imaging:BasePath"]);
             foreach (var ciff in savedCaff.Ciffs)
             {
-                var fullPath = Path.Combine(basePath, $"{ciff.Id}.png");
+                var fullPath = Path.Combine(BasePath, $"{ciff.Id}.png");
                 Assert.IsTrue(File.Exists(fullPath));
                 Assert.IsNotNull(parsedCaff.Ciffs.Find(c => ciff.Id == c.Id));
                 File.Delete(fullPath);
