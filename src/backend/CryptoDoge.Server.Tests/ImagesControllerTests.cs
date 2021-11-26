@@ -20,6 +20,10 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Server.Tests
@@ -35,6 +39,7 @@ namespace CryptoDoge.Server.Tests
         private IdentityService identityService;
         private Mock<UserManager<User>> userManager;
         private Mock<SignInManager<User>> signInManager;
+        private ImagesController imagesController;
 
         public ImagesControllerTests()
         {
@@ -60,19 +65,46 @@ namespace CryptoDoge.Server.Tests
             var _store = new Mock<IUserStore<User>>();
             userManager = new Mock<UserManager<User>>(_store.Object, null, null, null, null, null, null, null, null);
 
-            var _contextAccessor = new Mock<IHttpContextAccessor>();
-            var _userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
-            signInManager = new Mock<SignInManager<User>>(userManager.Object,
-                           _contextAccessor.Object, _userPrincipalFactory.Object, null, null, null);
-            identityService = new IdentityService(_contextAccessor.Object, userManager.Object);
+            var user = new User() { UserName = "JohnDoe", Id = "30776ea1-016e-419d-becf-afeab0c548e7" };
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+            };
+            var identity = new ClaimsIdentity(claims, "Test");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            var mockPrincipal = new Mock<IPrincipal>();
+            mockPrincipal.Setup(x => x.Identity).Returns(identity);
+            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(true);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.Setup(m => m.User).Returns(claimsPrincipal);
+
+            identityService = new IdentityService(new HttpContextAccessor { HttpContext = mockHttpContext.Object }, userManager.Object);
+            imagesController = new ImagesController(parserService, imagingService, identityService);
+
+            imagesController.ControllerContext = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object,
+            };
         }
 
         [Test]
-        public async Task GetEmptyCaffs()
+        public async Task GetCaffsAsync_NoResult()
         {
             var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = (await controller.GetCaffs()).Result as OkObjectResult;
-            Assert.IsEmpty(response.Value as List<CaffDto>);
+            var response = (await controller.GetCaffs());
+            Assert.IsInstanceOf<OkObjectResult>(response.Result);
+            Assert.IsEmpty((response.Result as OkObjectResult).Value as List<CaffDto>);
+        }
+
+        [Test]
+        public async Task GetCaffByIdAsync_NoResult()
+        {
+            var controller = new ImagesController(parserService, imagingService, identityService);
+            var response = (await controller.GetCaffByIdAsync("notexisting")).Result;
+            Assert.IsInstanceOf<NotFoundResult>(response);
         }
 
         [Test]
@@ -85,11 +117,26 @@ namespace CryptoDoge.Server.Tests
         }
 
         [Test]
-        public async Task DeleteCaff()
+        public async Task DeleteCaffAsync()
         {
             var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = (await controller.DeleteCaff("id"));
+            var response = await controller.DeleteCaff("id");
             Assert.IsInstanceOf<NoContentResult>(response);
+        }
+
+        [Test]
+        public async Task UploadAsync()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var response = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(response.Result);
+            var result = (response.Result as OkObjectResult).Value;
+            Assert.IsInstanceOf<CaffDto>(result);
+            Assert.IsNotNull(result);
+
+            // CleanUp
+            await imagesController.DeleteCaff((result as CaffDto).Id);
         }
     }
 }

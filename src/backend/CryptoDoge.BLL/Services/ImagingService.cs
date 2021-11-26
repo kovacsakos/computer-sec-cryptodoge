@@ -181,6 +181,11 @@ namespace CryptoDoge.BLL.Services
             var imageName = $"{parsedCiff.Id}.png";
             var path = Path.GetFullPath(BasePath);
 
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
             path = Path.Combine(path, imageName);
             bmp.Bitmap.Save(path);
 
