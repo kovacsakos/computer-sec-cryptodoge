@@ -76,42 +76,59 @@ namespace CryptoDoge.Server.Tests
 
             var mockPrincipal = new Mock<IPrincipal>();
             mockPrincipal.Setup(x => x.Identity).Returns(identity);
-            mockPrincipal.Setup(x => x.IsInRole(It.IsAny<string>())).Returns(true);
 
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.Setup(m => m.User).Returns(claimsPrincipal);
 
             identityService = new IdentityService(new HttpContextAccessor { HttpContext = mockHttpContext.Object }, userManager.Object);
-            imagesController = new ImagesController(parserService, imagingService, identityService);
-
-            imagesController.ControllerContext = new ControllerContext
+            imagesController = new ImagesController(parserService, imagingService, identityService)
             {
-                HttpContext = mockHttpContext.Object,
+                ControllerContext = new ControllerContext
+                {
+                    HttpContext = mockHttpContext.Object,
+                }
             };
         }
 
         [Test]
         public async Task GetCaffsAsync_NoResult()
         {
-            var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = (await controller.GetCaffs());
+            var response = (await imagesController.GetCaffs());
             Assert.IsInstanceOf<OkObjectResult>(response.Result);
             Assert.IsEmpty((response.Result as OkObjectResult).Value as List<CaffDto>);
         }
 
         [Test]
+        public async Task GetCaffsAsync_AfterUpload()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            var caffId = (caff as CaffDto).Id;
+
+            var response = (await imagesController.GetCaffs());
+            var responseResult = response.Result;
+            var caffList = (responseResult as OkObjectResult).Value as List<CaffDto>;
+
+            Assert.IsInstanceOf<OkObjectResult>(responseResult);
+            Assert.IsNotEmpty(caffList);
+            Assert.AreEqual(caffId, caffList.Single().Id);
+
+            await CleanUp(caffId);
+        }
+
+        [Test]
         public async Task GetCaffByIdAsync_NoResult()
         {
-            var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = (await controller.GetCaffByIdAsync("notexisting")).Result;
+            var response = (await imagesController.GetCaffByIdAsync("notexisting")).Result;
             Assert.IsInstanceOf<NotFoundResult>(response);
         }
 
         [Test]
         public async Task GetCaffComment_NotExist()
         {
-            var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = (await controller.GetComment("id"));
+            var response = (await imagesController.GetComment("id"));
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
             Assert.AreEqual("Caff comment does not exists.", (response as BadRequestObjectResult).Value);
         }
@@ -119,8 +136,7 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task DeleteCaffAsync()
         {
-            var controller = new ImagesController(parserService, imagingService, identityService);
-            var response = await controller.DeleteCaff("id");
+            var response = await imagesController.DeleteCaff("id");
             Assert.IsInstanceOf<NoContentResult>(response);
         }
 
@@ -135,8 +151,11 @@ namespace CryptoDoge.Server.Tests
             Assert.IsInstanceOf<CaffDto>(result);
             Assert.IsNotNull(result);
 
-            // CleanUp
-            await imagesController.DeleteCaff((result as CaffDto).Id);
+            await CleanUp((result as CaffDto).Id);
         }
+
+
+
+        private async Task CleanUp(string caffId) => await imagesController.DeleteCaff(caffId);
     }
 }
