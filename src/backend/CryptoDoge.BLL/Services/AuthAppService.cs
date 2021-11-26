@@ -6,10 +6,6 @@ using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Services
@@ -93,7 +89,7 @@ namespace CryptoDoge.BLL.Services
                 throw new AuthException("Couldn't create user. Try with different values");
             }
 
-            await userManager.AddToRoleAsync(createdUser, "Default");
+            await userManager.AddToRoleAsync(createdUser, "User");
 
             var result = await signInManager.PasswordSignInAsync(createdUser, registerDto.Password, true, false);
             if (!result.Succeeded)

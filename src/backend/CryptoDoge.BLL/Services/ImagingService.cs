@@ -70,6 +70,20 @@ namespace CryptoDoge.BLL.Services
             return mapper.Map<CaffDto>(caff);
         }
 
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByCaption(string query)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByCaption(query);
+            return result.Select(caff => mapper.Map<CaffDto>(caff));
+        }
+
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByTags(List<string> queryTags)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByTags(queryTags);
+            return result.Select(caff => mapper.Map<CaffDto>(caff));
+        }
+
         public async Task DeleteCaffImagesAsync(string id)
         {
             using var loggerScope = new LoggerScope(logger);
@@ -89,20 +103,35 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task AddCaffCommentAsync(CaffCommentDto caffCommentDto)
+        public async Task AddCaffCommentAsync(string caffId, string comment)
         {
             using var loggerScope = new LoggerScope(logger);
-            var caff = await caffRepository.GetCaffByIdAsync(caffCommentDto.CaffId);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
             if (caff != null)
             {
                 await caffRepository.AddCaffCommentAsync(new CaffComment
                 {
-                    Comment = caffCommentDto.Comment,
+                    Comment = comment,
                 });
             } 
             else
             {
                 throw new NotFoundException("Caff does not exists.", 404);
+            }
+        }
+
+        public async Task UpdateCommentOnCaffAsync(string id, string comment)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            if (caffComment != null)
+            {
+                caffComment.Comment = comment;
+                await caffRepository.UpdateCaffCommentAsync(caffComment);
+            }
+            else
+            {
+                throw new NotFoundException("Caff comment does not exists.", 404);
             }
         }
 
@@ -113,17 +142,6 @@ namespace CryptoDoge.BLL.Services
             if(caffComment != null)
             {
                 await caffRepository.DeleteCaffCommentAsync(caffComment);
-            }
-        }
-
-        public async Task UpdateCommentOnCaffAsync(string id, CaffCommentUpdateDto caffCommentUpdateDto)
-        {
-            using var loggerScope = new LoggerScope(logger);
-            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
-            if (caffComment != null)
-            {
-                caffComment.Comment = caffCommentUpdateDto.Comment;
-                await caffRepository.UpdateCaffCommentAsync(caffComment);
             }
         }
 
@@ -151,20 +169,6 @@ namespace CryptoDoge.BLL.Services
             newCiff.Id = parsedCiff.Id;
 
             return newCiff;
-        }
-
-        public async Task<IEnumerable<CaffDto>> SearchCaffsByCaption(string query)
-        {
-            using var loggerScope = new LoggerScope(logger);
-            var result = await caffRepository.SearchCaffsByCaption(query);
-            return result.Select(caff => mapper.Map<CaffDto>(caff));
-        }
-
-        public async Task<IEnumerable<CaffDto>> SearchCaffsByTags(List<string> queryTags)
-        {
-            using var loggerScope = new LoggerScope(logger);
-            var result = await caffRepository.SearchCaffsByTags(queryTags);
-            return result.Select(caff => mapper.Map<CaffDto>(caff));
         }
     }
 }

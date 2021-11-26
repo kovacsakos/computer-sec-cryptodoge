@@ -29,18 +29,18 @@ namespace CryptoDoge.Server.Controllers
             this.identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
 
-        [HttpGet]
         [AllowAnonymous]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<CaffDto>>> GetCaffs()
         {
             return Ok(await imagingService.GetCaffsAsync());
         }
 
-        [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<CaffDto>> GetCaffByIdAsync(string id)
+        [HttpGet("{caffId}")]
+        public async Task<ActionResult<CaffDto>> GetCaffByIdAsync(string caffId)
         {
-            var caff = await imagingService.GetCaffByIdAsync(id);
+            var caff = await imagingService.GetCaffByIdAsync(caffId);
             if (caff != null)
             {
                 return Ok(caff);
@@ -48,8 +48,8 @@ namespace CryptoDoge.Server.Controllers
             return NotFound();
         }
 
-        [HttpPost("searchByCaption")]
         [AllowAnonymous]
+        [HttpPost("searchByCaption")]
         public async Task<ActionResult<IEnumerable<CaffDto>>> SearchCaffsByCaption([FromBody] SearchByCaptionDto searchByCaptionDto)
         {
             if (searchByCaptionDto is null || string.IsNullOrEmpty(searchByCaptionDto.Query))
@@ -60,8 +60,8 @@ namespace CryptoDoge.Server.Controllers
             return Ok(await imagingService.SearchCaffsByCaption(searchByCaptionDto.Query));
         }
 
-        [HttpPost("searchByTags")]
         [AllowAnonymous]
+        [HttpPost("searchByTags")]
         public async Task<ActionResult<IEnumerable<CaffDto>>> SearchCaffsByTags([FromBody] SearchByTagsDto searchByTagsDto)
         {
             if (searchByTagsDto is null || !searchByTagsDto.QueryTags.Any())
@@ -72,8 +72,8 @@ namespace CryptoDoge.Server.Controllers
             return Ok(await imagingService.SearchCaffsByTags(searchByTagsDto.QueryTags));
         }
 
-        [HttpPost("upload")]
         [Authorize(Policy = "RequireLogin", Roles = "Admin, User")]
+        [HttpPost("upload")]
         public async Task<ActionResult<CaffDto>> UploadCaff([FromForm] IFormFile file)
         {
             try
@@ -94,21 +94,28 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Policy = "RequireLogin", Roles = "Admin")]
-        public async Task<ActionResult> DeleteCaff(string id)
+        [HttpGet("{caffId}/download")]
+        public IActionResult DownloadCaff(string caffId)
         {
-            await imagingService.DeleteCaffImagesAsync(id);
+            // TODO
+            throw new NotImplementedException();
+        }
+
+        [Authorize(Policy = "RequireLogin", Roles = "Admin")]
+        [HttpDelete("{caffId}")]
+        public async Task<ActionResult> DeleteCaff(string caffId)
+        {
+            await imagingService.DeleteCaffImagesAsync(caffId);
             return NoContent();
         }
 
-        [HttpPost("comment")]
         [Authorize(Policy = "RequireLogin", Roles = "Admin, User")]
-        public async Task<ActionResult> PostComment([FromBody] CaffCommentDto caffCommentDto)
+        [HttpPost("comment/{caffId}")]
+        public async Task<ActionResult> PostComment(string caffId, [FromBody] CaffCommentDto caffCommentDto)
         {
             try
             {
-                await imagingService.AddCaffCommentAsync(caffCommentDto);
+                await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment);
                 return Ok();
             } 
             catch (Exception ex)
@@ -117,13 +124,13 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [HttpPut("comment/{id}")]
         [Authorize(Policy = "RequireLogin", Roles = "Admin")]
-        public async Task<ActionResult> UpdateComment(string id, [FromBody] CaffCommentUpdateDto caffCommentUpdateDto)
+        [HttpPut("comment/{caffCommentId}")]
+        public async Task<ActionResult> UpdateComment(string caffCommentId, [FromBody] CaffCommentDto caffCommentDto)
         {
             try
             {
-                await imagingService.UpdateCommentOnCaffAsync(id, caffCommentUpdateDto);
+                await imagingService.UpdateCommentOnCaffAsync(caffCommentId, caffCommentDto.Comment);
                 return Ok();
             }
             catch (Exception ex)
@@ -132,11 +139,11 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [HttpDelete("comment/{id}")]
         [Authorize(Policy = "RequireLogin", Roles = "Admin")]
-        public async Task<ActionResult> DeleteComment(string id)
+        [HttpDelete("comment/{caffCommentId}")]
+        public async Task<ActionResult> DeleteComment(string caffCommentId)
         {
-            await imagingService.DeleteCaffCommentAsync(id);
+            await imagingService.DeleteCaffCommentAsync(caffCommentId);
             return NoContent();
         }
     }
