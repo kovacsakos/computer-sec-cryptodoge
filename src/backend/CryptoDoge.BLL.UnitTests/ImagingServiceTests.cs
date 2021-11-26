@@ -97,7 +97,7 @@ namespace CryptoDoge.BLL.UnitTests
 
         }
 
-        private void ValidateCaff(Caff caff)
+        private static void ValidateCaff(Caff caff)
         {
             Assert.AreEqual("Test Creator", caff.Creator);
             Assert.AreEqual(2, caff.NumberOfAnimations);

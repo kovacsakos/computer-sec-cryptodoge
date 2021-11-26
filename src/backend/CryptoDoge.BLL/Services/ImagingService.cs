@@ -21,7 +21,7 @@ namespace CryptoDoge.BLL.Services
     public class ImagingService : IImagingService
     {
         private readonly ILogger<ImagingService> logger;
-        private readonly string BasePath = string.Empty;
+        private readonly string BasePath;
         private readonly ICaffRepository caffRepository;
         private readonly IMapper mapper;
 
@@ -151,11 +151,11 @@ namespace CryptoDoge.BLL.Services
             var pixels = parsedCiff.Pixels;
             using var bmp = new DirectBitmap(parsedCiff.Width, parsedCiff.Height);
 
-            for (int x = 0; x < pixels.Count; x++)
+            for (int y = 0; y < pixels.Count; y++)
             {
-                for (int y = 0; y < pixels[x].Count; y++)
+                for (int x = 0; x < pixels[y].Count; x++)
                 {
-                    bmp.SetPixel(y, x, Color.FromArgb(pixels[x][y][0], pixels[x][y][1], pixels[x][y][2]));
+                    bmp.SetPixel(x, y, Color.FromArgb(pixels[y][x][0], pixels[y][x][1], pixels[y][x][2]));
                 }
             }
 

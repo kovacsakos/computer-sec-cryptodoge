@@ -70,8 +70,8 @@ namespace CryptoDoge.BLL.UnitTests
 
 			var tokenDto = await authAppservice.LoginAsync(loginDto);
 
-			Assert.AreEqual(tokenDto.AccessToken, accessToken);
-			Assert.AreEqual(tokenDto.RefreshToken, refreshToken);
+			Assert.AreEqual(accessToken, tokenDto.AccessToken);
+			Assert.AreEqual(refreshToken, tokenDto.RefreshToken);
 		}
 
 		[Test]
@@ -94,7 +94,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(user)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.LoginAsync(loginDto));
-			Assert.AreEqual(exception.Message, "Wrong username or password");
+			Assert.AreEqual("Wrong username or password", exception.Message);
 		}
 
 		[Test]
@@ -117,7 +117,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(user)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.LoginAsync(loginDto));
-			Assert.AreEqual(exception.Message, "Login was not successful");
+			Assert.AreEqual("Login was not successful", exception.Message);
 		}
 
 		[Test]
@@ -160,8 +160,8 @@ namespace CryptoDoge.BLL.UnitTests
 
 			var tokenDto = await authAppservice.RegisterAsync(registerDto);
 
-			Assert.AreEqual(tokenDto.AccessToken, accessToken);
-			Assert.AreEqual(tokenDto.RefreshToken, refreshToken);
+			Assert.AreEqual(accessToken, tokenDto.AccessToken);
+			Assert.AreEqual(refreshToken, tokenDto.RefreshToken);
 		}
 
 		[Test]
@@ -219,7 +219,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(createdUser)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.RegisterAsync(registerDto));
-			Assert.AreEqual(exception.Message, "Email taken");
+			Assert.AreEqual("Email taken", exception.Message);
 		}
 
 		[Test]
@@ -247,7 +247,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(createdUser)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.RegisterAsync(registerDto));
-			Assert.AreEqual(exception.Message, "Couldn't create user. Try with different values");
+			Assert.AreEqual("Couldn't create user. Try with different values", exception.Message);
 		}
 
 		[Test]
@@ -275,7 +275,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(createdUser)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.RegisterAsync(registerDto));
-			Assert.AreEqual(exception.Message, "Can't login, try again");
+			Assert.AreEqual("Can't login, try again", exception.Message);
 		}
 
 		[Test]
@@ -292,8 +292,8 @@ namespace CryptoDoge.BLL.UnitTests
 
 			var tokenDto = await authAppservice.RenewTokenAsync(It.IsAny<string>());
 
-			Assert.AreEqual(tokenDto.AccessToken, accessToken);
-			Assert.AreEqual(tokenDto.RefreshToken, refreshToken);
+			Assert.AreEqual(accessToken, tokenDto.AccessToken);
+			Assert.AreEqual(refreshToken, tokenDto.RefreshToken);
 		}
 
 		[Test]
@@ -309,7 +309,7 @@ namespace CryptoDoge.BLL.UnitTests
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(user)).Returns(Task.FromResult(refreshToken));
 
 			var exception = Assert.ThrowsAsync<AuthException>(() => authAppservice.RenewTokenAsync(It.IsAny<string>()));
-			Assert.AreEqual(exception.Message, "There is no user with that specific refresh token");
+			Assert.AreEqual("There is no user with that specific refresh token", exception.Message);
 		}
 	}
 }

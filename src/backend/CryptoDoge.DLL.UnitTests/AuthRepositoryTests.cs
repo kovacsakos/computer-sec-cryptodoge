@@ -102,7 +102,7 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 				catch(AuthException e)
 				{
-					Assert.AreEqual(e.Message, "Nobody has that refresh token");
+					Assert.AreEqual("Nobody has that refresh token", e.Message);
 					return;
 				}
 				finally
@@ -217,7 +217,7 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 				catch (AuthException e)
 				{
-					Assert.AreEqual(e.Message, "Couldn't create the User");
+					Assert.AreEqual("Couldn't create the User", e.Message);
 					return;
 				}
 				finally

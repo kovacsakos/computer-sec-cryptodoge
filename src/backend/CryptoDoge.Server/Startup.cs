@@ -150,7 +150,7 @@ namespace CryptoDoge.Server
             services.AddScoped<IParserService, ParserService.ParserService>();
 
         }
-        private string GetOperationId(ApiDescription e)
+        private static string GetOperationId(ApiDescription e)
         {
             var controllerName = e.ActionDescriptor.RouteValues["controller"];
 
