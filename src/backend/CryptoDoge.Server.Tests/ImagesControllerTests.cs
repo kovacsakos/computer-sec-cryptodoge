@@ -11,6 +11,7 @@ using CryptoDoge.ParserService;
 using CryptoDoge.Server.Controllers;
 using CryptoDoge.Server.Infrastructure.Services;
 using CryptoDoge.Server.Tests.Helpers;
+using CryptoDoge.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -100,21 +101,16 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task GetCaffsAsync_AfterUpload()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var uploadResponse = await imagesController.UploadCaff(formFile);
-            var caff = (uploadResponse.Result as OkObjectResult).Value;
-            var caffId = (caff as CaffDto).Id;
-
+            var caffDto = await UploadCaff();
             var response = (await imagesController.GetCaffs());
             var responseResult = response.Result;
             var caffList = (responseResult as OkObjectResult).Value as List<CaffDto>;
 
             Assert.IsInstanceOf<OkObjectResult>(responseResult);
             Assert.IsNotEmpty(caffList);
-            Assert.AreEqual(caffId, caffList.Single().Id);
+            Assert.AreEqual(caffDto.Id, caffList.Single().Id);
 
-            await CleanUp(caffId);
+            await CleanUp(caffDto.Id);
         }
 
         [Test]
@@ -127,24 +123,16 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task GetCaffByIdAsync_AfterUpload()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var uploadResponse = await imagesController.UploadCaff(formFile);
-            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
-
-            var caff = (uploadResponse.Result as OkObjectResult).Value;
-            var caffDto = caff as CaffDto;
-            var caffId = caffDto.Id;
-
-            var response = await imagesController.GetCaffByIdAsync(caffId);
+            var caffDto = await UploadCaff();
+            var response = await imagesController.GetCaffByIdAsync(caffDto.Id);
             Assert.IsInstanceOf<OkObjectResult>(response.Result);
             var responseResult = (response.Result as OkObjectResult).Value;
             var caffResult = responseResult as CaffDto;
 
             Assert.IsNotNull(caffResult);
-            Assert.AreEqual(caffId, caffResult.Id);
+            Assert.AreEqual(caffDto.Id, caffResult.Id);
 
-            await CleanUp(caffId);
+            await CleanUp(caffDto.Id);
         }
 
         [Test]
@@ -166,15 +154,8 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task GetCaffComment_AfterUpload()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var uploadResponse = await imagesController.UploadCaff(formFile);
-            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
-            var caff = (uploadResponse.Result as OkObjectResult).Value;
-            var caffDto = caff as CaffDto;
-            var caffId = caffDto.Id;
-
-            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            var caffDto = await UploadCaff();
+            var commentResponse = await imagesController.PostComment(caffDto.Id, new CaffCommentDto { Comment = "Valami" });
             Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
             var commentResult = (commentResponse.Result as OkObjectResult).Value;
             var commentId = commentResult as string;
@@ -186,22 +167,15 @@ namespace CryptoDoge.Server.Tests
 
             Assert.IsNotNull(caffComment);
             Assert.AreEqual("Valami", caffComment.Comment);
-            await CleanUp(caffId);
+
+            await CleanUp(caffDto.Id);
         }
 
         [Test]
         public async Task UpdateCaffComment_AfterUpload()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var uploadResponse = await imagesController.UploadCaff(formFile);
-            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
-
-            var caff = (uploadResponse.Result as OkObjectResult).Value;
-            var caffDto = caff as CaffDto;
-            var caffId = caffDto.Id;
-
-            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            var caffDto = await UploadCaff();
+            var commentResponse = await imagesController.PostComment(caffDto.Id, new CaffCommentDto { Comment = "Valami" });
             Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
             var commentResult = (commentResponse.Result as OkObjectResult).Value;
             var commentId = commentResult as string;
@@ -218,7 +192,7 @@ namespace CryptoDoge.Server.Tests
             Assert.IsNotNull(caffComment);
             Assert.AreEqual("Update", caffComment.Comment);
 
-            await CleanUp(caffId);
+            await CleanUp(caffDto.Id);
         }
 
         [Test]
@@ -231,17 +205,10 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task UploadAsync()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var response = await imagesController.UploadCaff(formFile);
-            Assert.IsInstanceOf<OkObjectResult>(response.Result);
-
-            var result = (response.Result as OkObjectResult).Value;
-
-            Assert.IsInstanceOf<CaffDto>(result);
-            Assert.IsNotNull(result);
-
-            await CleanUp((result as CaffDto).Id);
+            var caffDto = await UploadCaff();
+            Assert.IsInstanceOf<CaffDto>(caffDto);
+            Assert.IsNotNull(caffDto);
+            await CleanUp(caffDto.Id);
         }
 
         [Test]
@@ -255,16 +222,8 @@ namespace CryptoDoge.Server.Tests
         [Test]
         public async Task PostComment_AfterUpload()
         {
-            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
-            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
-            var uploadResponse = await imagesController.UploadCaff(formFile);
-            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
-
-            var caff = (uploadResponse.Result as OkObjectResult).Value;
-            var caffDto = caff as CaffDto;
-            var caffId = caffDto.Id;
-
-            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            var caffDto = await UploadCaff();
+            var commentResponse = await imagesController.PostComment(caffDto.Id, new CaffCommentDto { Comment = "Valami" });
             Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
 
             var commentResult = (commentResponse.Result as OkObjectResult).Value;
@@ -273,9 +232,117 @@ namespace CryptoDoge.Server.Tests
             Assert.IsNotNull(commentId);
             Assert.IsNotEmpty(commentId);
 
-            await CleanUp(caffId);
+            await CleanUp(caffDto.Id);
+        }
+
+        [Test]
+        public async Task DeleteComment_NotExists()
+        {
+            var response = await imagesController.DeleteComment("notexistingid");
+            Assert.IsInstanceOf<NoContentResult>(response);
+        }
+
+        [Test]
+        public async Task DeleteComment_AfterUpload()
+        {
+            var caffDto = await UploadCaff();
+            var commentResponse = await imagesController.PostComment(caffDto.Id, new CaffCommentDto { Comment = "Valami" });
+            Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
+
+            var commentResult = (commentResponse.Result as OkObjectResult).Value;
+            var commentId = commentResult as string;
+
+            var response = await imagesController.DeleteComment(commentId);
+            Assert.IsInstanceOf<NoContentResult>(response);
+
+            var comment = await imagesController.GetComment(commentId);
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(comment.Result);
+            Assert.AreEqual("Caff comment does not exists.", (comment.Result as BadRequestObjectResult).Value);
+            await CleanUp(caffDto.Id);
+        }
+
+        [Test]
+        public async Task SearchByCaption_NoResult()
+        {
+            await UploadCaff();
+            var search = await imagesController.SearchCaffsByCaption(new SearchByCaptionDto { Query = "notexistingquerycaption" });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsEmpty(list);
+        }
+
+        [Test]
+        public async Task SearchByCaption_HasResult()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByCaption(new SearchByCaptionDto { Query = "scenery" });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        [Test]
+        public async Task SearchByTags_NoResult()
+        {
+            await UploadCaff();
+            var search = await imagesController.SearchCaffsByTags(new SearchByTagsDto { QueryTags = new List<string> { "asd1", "asd2" } });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsEmpty(list);
+        }
+
+        [Test]
+        public async Task SearchByTags_HasResult()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByTags(new SearchByTagsDto { QueryTags = new List<string> { "mountains" } });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        private async Task<CaffDto> UploadCaff()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
+
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            return caff as CaffDto;
         }
 
         private async Task CleanUp(string caffId) => await imagesController.DeleteCaff(caffId);
+
+        private static bool CaffDtoEquals(CaffDto x, CaffDto y)
+        {
+            if (!CaffEqualsWithoutSequenceProperties(x, y))
+                return false;
+
+            return x.Ciffs.ToList().SequenceEqual(y.Ciffs.ToList(), CiffDtoEquals) &&
+                   x.Comments.ToList().SequenceEqual(y.Comments.ToList(), CaffCommentEquals) &&
+                   x.Captions.ToList().SequenceEqual(y.Captions.ToList()) &&
+                   x.Tags.ToList().SequenceEqual(y.Tags.ToList());
+        }
+
+        private static bool CaffEqualsWithoutSequenceProperties(CaffDto x, CaffDto y)
+            => EqualityComparerHelper.PropertiesEqual(x, y, nameof(CaffDto.Ciffs), nameof(CaffDto.Captions), nameof(CaffDto.Comments), nameof(CaffDto.Tags));
+
+        private static bool CiffDtoEquals(CiffDto x, CiffDto y)
+            => EqualityComparerHelper.PropertiesEqual(x, y);
+
+        private static bool CaffCommentEquals(CaffComment x, CaffComment y)
+        {
+            if (!CaffCommentEqualsWithoutUserAndCaff(x, y))
+                return false;
+
+            return x.Caff.Id == y.Caff.Id && x.User.Id == y.User.Id;
+        }
+
+        private static bool CaffCommentEqualsWithoutUserAndCaff(CaffComment x, CaffComment y)
+            => EqualityComparerHelper.PropertiesEqual(x, y, nameof(CaffComment.User), nameof(CaffComment.Caff));
     }
 }
