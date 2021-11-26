@@ -126,11 +126,100 @@ namespace CryptoDoge.Server.Tests
         }
 
         [Test]
+        public async Task GetCaffByIdAsync_AfterUpload()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
+
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            var caffDto = caff as CaffDto;
+            var caffId = caffDto.Id;
+
+            var response = await imagesController.GetCaffByIdAsync(caffId);
+            Assert.IsInstanceOf<OkObjectResult>(response.Result);
+            var responseResult = (response.Result as OkObjectResult).Value;
+            var caffResult = responseResult as CaffDto;
+
+            Assert.IsNotNull(caffResult);
+            Assert.AreEqual(caffId, caffResult.Id);
+
+            await CleanUp(caffId);
+        }
+
+        [Test]
         public async Task GetCaffComment_NotExist()
         {
             var response = (await imagesController.GetComment("id"));
+            Assert.IsInstanceOf<BadRequestObjectResult>(response.Result);
+            Assert.AreEqual("Caff comment does not exists.", (response.Result as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public async Task UpdateCaffComment_NotExist()
+        {
+            var response = await imagesController.UpdateComment("id", new CaffCommentDto { Comment = "Update" });
             Assert.IsInstanceOf<BadRequestObjectResult>(response);
             Assert.AreEqual("Caff comment does not exists.", (response as BadRequestObjectResult).Value);
+        }
+
+        [Test]
+        public async Task GetCaffComment_AfterUpload()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            var caffDto = caff as CaffDto;
+            var caffId = caffDto.Id;
+
+            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
+            var commentResult = (commentResponse.Result as OkObjectResult).Value;
+            var commentId = commentResult as string;
+
+            var comment = await imagesController.GetComment(commentId);
+            Assert.IsInstanceOf<OkObjectResult>(comment.Result);
+            var caffCommentResult = (comment.Result as OkObjectResult).Value;
+            var caffComment = caffCommentResult as CaffComment;
+
+            Assert.IsNotNull(caffComment);
+            Assert.AreEqual("Valami", caffComment.Comment);
+            await CleanUp(caffId);
+        }
+
+        [Test]
+        public async Task UpdateCaffComment_AfterUpload()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
+
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            var caffDto = caff as CaffDto;
+            var caffId = caffDto.Id;
+
+            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
+            var commentResult = (commentResponse.Result as OkObjectResult).Value;
+            var commentId = commentResult as string;
+
+            var updateResult = await imagesController.UpdateComment(commentId, new CaffCommentDto { Comment = "Update" });
+            Assert.IsInstanceOf<OkResult>(updateResult);
+
+            var comment = await imagesController.GetComment(commentId);
+            Assert.IsInstanceOf<OkObjectResult>(comment.Result);
+
+            var caffCommentResult = (comment.Result as OkObjectResult).Value;
+            var caffComment = caffCommentResult as CaffComment;
+
+            Assert.IsNotNull(caffComment);
+            Assert.AreEqual("Update", caffComment.Comment);
+
+            await CleanUp(caffId);
         }
 
         [Test]
@@ -147,14 +236,46 @@ namespace CryptoDoge.Server.Tests
             var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
             var response = await imagesController.UploadCaff(formFile);
             Assert.IsInstanceOf<OkObjectResult>(response.Result);
+
             var result = (response.Result as OkObjectResult).Value;
+
             Assert.IsInstanceOf<CaffDto>(result);
             Assert.IsNotNull(result);
 
             await CleanUp((result as CaffDto).Id);
         }
 
+        [Test]
+        public async Task PostComment_CaffNotExists()
+        {
+            var commentResponse = await imagesController.PostComment("notexistingcaffid", new CaffCommentDto { Comment = "Valami" });
+            Assert.IsInstanceOf<BadRequestObjectResult>(commentResponse.Result);
+            Assert.AreEqual("Caff does not exists.", (commentResponse.Result as BadRequestObjectResult).Value);
+        }
 
+        [Test]
+        public async Task PostComment_AfterUpload()
+        {
+            using var stream = new MemoryStream(File.ReadAllBytes(@"TestData\1.caff").ToArray());
+            var formFile = new FormFile(stream, 0, stream.Length, "1.caff", "1.caff");
+            var uploadResponse = await imagesController.UploadCaff(formFile);
+            Assert.IsInstanceOf<OkObjectResult>(uploadResponse.Result);
+
+            var caff = (uploadResponse.Result as OkObjectResult).Value;
+            var caffDto = caff as CaffDto;
+            var caffId = caffDto.Id;
+
+            var commentResponse = await imagesController.PostComment(caffId, new CaffCommentDto { Comment = "Valami" });
+            Assert.IsInstanceOf<OkObjectResult>(commentResponse.Result);
+
+            var commentResult = (commentResponse.Result as OkObjectResult).Value;
+            var commentId = commentResult as string;
+
+            Assert.IsNotNull(commentId);
+            Assert.IsNotEmpty(commentId);
+
+            await CleanUp(caffId);
+        }
 
         private async Task CleanUp(string caffId) => await imagesController.DeleteCaff(caffId);
     }

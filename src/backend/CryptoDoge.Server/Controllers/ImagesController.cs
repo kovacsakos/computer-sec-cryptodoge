@@ -1,5 +1,6 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
+using CryptoDoge.Model.Entities;
 using CryptoDoge.ParserService;
 using CryptoDoge.Server.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -110,12 +111,11 @@ namespace CryptoDoge.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("comment/{id}")]
-        public async Task<ActionResult> GetComment(string id)
+        public async Task<ActionResult<CaffComment>> GetComment(string id)
         {
             try
-            {
-                await imagingService.GetCaffCommentByIdAsync(id);
-                return Ok();
+            {            
+                return Ok(await imagingService.GetCaffCommentByIdAsync(id));
             }
             catch (Exception ex)
             {
