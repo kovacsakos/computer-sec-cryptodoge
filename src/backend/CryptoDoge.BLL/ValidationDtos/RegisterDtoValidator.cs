@@ -14,7 +14,11 @@ namespace CryptoDoge.BLL.ValidationDtos
 				.NotEmpty().WithMessage("Username is required");
 			RuleFor(ent => ent.Password)
 				.MinimumLength(8).WithMessage("Password must be at least 8 character")
-				.NotEmpty().WithMessage("Password is required");
+				.NotEmpty().WithMessage("Password is required")
+				.Matches("[A-Z]").WithMessage("Password must contain one or more capital letters.")
+				.Matches("[a-z]").WithMessage("Password must contain one or more lowercase letters.")
+				.Matches(@"\d").WithMessage("Password must contain one or more digits.")
+				.Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("Password must contain one or more special characters.");
 		}
 	}
 }
