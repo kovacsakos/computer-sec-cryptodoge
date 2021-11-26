@@ -31,30 +31,37 @@ namespace CryptoDoge.Shared
                 return x == y;
 
             Type type = typeof(T);
-            List<string> ignoreList = new List<string>(ignore);
-            foreach (PropertyInfo pi in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            var ignoreList = new List<string>(ignore);
+
+            foreach (string name in type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(x => x.Name))
             {
-                if (ignoreList.Contains(pi.Name))
+                if (ignoreList.Contains(name))
                     continue;
 
-                var propertyType = type.GetProperty(pi.Name).PropertyType;
-                object xValue = type.GetProperty(pi.Name).GetValue(x, null);
-                object yValue = type.GetProperty(pi.Name).GetValue(y, null);
+                var propertyType = type.GetProperty(name).PropertyType;
+                object xValue = type.GetProperty(name).GetValue(x, null);
+                object yValue = type.GetProperty(name).GetValue(y, null);
 
-                // Compare lists
-                if (propertyType.IsAssignableTo(typeof(IEnumerable<object>)))
-                {
-                    if (xValue != yValue && (xValue == null || yValue == null))
-                        return false;
-
-                    if (!(xValue as IEnumerable<object>).SequenceEqual(yValue as IEnumerable<object>))
-                        return false;
-                }
-                else if (xValue != yValue && (xValue == null || !xValue.Equals(yValue)))
-                {
-                    return false;
-                }
+                return CompareLists(propertyType, xValue, yValue);
             }
+            return true;
+        }
+
+        private static bool CompareLists(Type propertyType, object xValue, object yValue)
+        {
+            if (propertyType.IsAssignableTo(typeof(IEnumerable<object>)))
+            {
+                if (xValue != yValue && (xValue == null || yValue == null))
+                    return false;
+
+                if (!(xValue as IEnumerable<object>).SequenceEqual(yValue as IEnumerable<object>))
+                    return false;
+            }
+            else if (xValue != yValue && (xValue == null || !xValue.Equals(yValue)))
+            {
+                return false;
+            }
+
             return true;
         }
     }

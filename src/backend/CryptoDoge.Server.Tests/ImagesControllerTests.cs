@@ -38,7 +38,6 @@ namespace CryptoDoge.Server.Tests
         private ApplicationDbContext dbContext;
         private IdentityService identityService;
         private Mock<UserManager<User>> userManager;
-        private Mock<SignInManager<User>> signInManager;
         private ImagesController imagesController;
 
         public ImagesControllerTests()
