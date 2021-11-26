@@ -108,15 +108,30 @@ namespace CryptoDoge.Server.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
+        [HttpGet("comment/{id}")]
+        public async Task<ActionResult> GetComment(string id)
+        {
+            try
+            {
+                await imagingService.GetCaffCommentByIdAsync(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize(Policy = "RequireLogin", Roles = "Admin, User")]
         [HttpPost("comment/{caffId}")]
-        public async Task<ActionResult> PostComment(string caffId, [FromBody] CaffCommentDto caffCommentDto)
+        public async Task<ActionResult<string>> PostComment(string caffId, [FromBody] CaffCommentDto caffCommentDto)
         {
             try
             {
                 var user = await identityService.GetCurrentUserAsync();
-                await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment, user);
-                return Ok();
+                
+                return Ok(await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment, user));
             } 
             catch (Exception ex)
             {

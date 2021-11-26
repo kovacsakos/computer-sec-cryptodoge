@@ -60,7 +60,7 @@ namespace CryptoDoge.BLL.Services
         {
             using var loggerScope = new LoggerScope(logger);
             var caffs = await caffRepository.GetCaffsAsync();
-            return caffs.Select(caff => mapper.Map<CaffDto>(caff));
+            return caffs.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
         }
 
         public async Task<CaffDto> GetCaffByIdAsync(string caffId)
@@ -74,14 +74,14 @@ namespace CryptoDoge.BLL.Services
         {
             using var loggerScope = new LoggerScope(logger);
             var result = await caffRepository.SearchCaffsByCaption(query);
-            return result.Select(caff => mapper.Map<CaffDto>(caff));
+            return result.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
         }
 
         public async Task<IEnumerable<CaffDto>> SearchCaffsByTags(List<string> queryTags)
         {
             using var loggerScope = new LoggerScope(logger);
             var result = await caffRepository.SearchCaffsByTags(queryTags);
-            return result.Select(caff => mapper.Map<CaffDto>(caff));
+            return result.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
         }
 
         public async Task DeleteCaffImagesAsync(string caffId)
@@ -103,22 +103,39 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task AddCaffCommentAsync(string caffId, string comment, User user)
+        public async Task<string> AddCaffCommentAsync(string caffId, string comment, User user)
         {
             using var loggerScope = new LoggerScope(logger);
             var caff = await caffRepository.GetCaffByIdAsync(caffId);
             if (caff != null)
             {
+                var id = Guid.NewGuid().ToString();
                 await caffRepository.AddCaffCommentAsync(new CaffComment
                 {
+                    Id = id,
                     Comment = comment,
                     Caff = caff,
                     User = user,
                 });
+                return id;
             } 
             else
             {
                 throw new NotFoundException("Caff does not exists.", 404);
+            }
+        }
+
+        public async Task<CaffComment> GetCaffCommentByIdAsync(string id)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            if (caffComment != null)
+            {
+                return caffComment;
+            }
+            else
+            {
+                throw new NotFoundException("Caff comment does not exists.", 404);
             }
         }
 
