@@ -114,7 +114,8 @@ namespace CryptoDoge.Server.Controllers
         {
             try
             {
-                await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment);
+                var user = await identityService.GetCurrentUserAsync();
+                await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment, user);
                 return Ok();
             } 
             catch (Exception ex)

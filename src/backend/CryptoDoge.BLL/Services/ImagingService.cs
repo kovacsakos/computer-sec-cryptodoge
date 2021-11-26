@@ -103,7 +103,7 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task AddCaffCommentAsync(string caffId, string comment)
+        public async Task AddCaffCommentAsync(string caffId, string comment, User user)
         {
             using var loggerScope = new LoggerScope(logger);
             var caff = await caffRepository.GetCaffByIdAsync(caffId);
@@ -112,6 +112,8 @@ namespace CryptoDoge.BLL.Services
                 await caffRepository.AddCaffCommentAsync(new CaffComment
                 {
                     Comment = comment,
+                    Caff = caff,
+                    User = user,
                 });
             } 
             else

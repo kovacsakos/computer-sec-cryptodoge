@@ -12,7 +12,7 @@ namespace CryptoDoge.BLL.Interfaces
         Task<IEnumerable<CaffDto>> GetCaffsAsync();
         Task<CaffDto> GetCaffByIdAsync(string caffId);
         Task DeleteCaffImagesAsync(string caffId);
-        Task AddCaffCommentAsync(string caffId, string comment);
+        Task AddCaffCommentAsync(string caffId, string comment, User user);
         Task DeleteCaffCommentAsync(string caffCommentId);
         Task UpdateCommentOnCaffAsync(string caffCommentId, string comment);
         Task<IEnumerable<CaffDto>> SearchCaffsByCaption(string query);

@@ -230,54 +230,10 @@ namespace CryptoDoge.DLL.UnitTests
 			}
 		}
 
+		[TestCase("Admin")]
+		[TestCase("User")]
 		[Test]
-		public async Task RegisterAsync_AsAdmin()
-		{
-			var roles = new IdentityRole[]
-			{
-				new IdentityRole("Admin"),
-				new IdentityRole("User"),
-			};
-
-			User user;
-			using (var context = new ApplicationDbContext(options))
-			{
-				user = new User
-				{
-					Id = "adminId",
-					UserName = "admin",
-					NormalizedUserName = "admin",
-					Email = "admin@mail.com",
-					NormalizedEmail = "admin@mail.com",
-					EmailConfirmed = false,
-					RefreshToken = "adminRefreshToken",
-				};
-
-				var passwordHasher = new PasswordHasher<User>();
-				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
-
-				await context.Users.AddAsync(user);
-				await context.Roles.AddRangeAsync(roles);
-				await context.SaveChangesAsync();
-			}
-
-			userManager.Setup(r => r.AddToRoleAsync(It.IsAny<User>(), "Admin")).Returns(Task.FromResult(IdentityResult.Success));
-			userManager.Setup(r => r.GetUsersInRoleAsync("Admin")).Returns(Task.FromResult(new List<User> { user } as IList<User>));
-			await userManager.Object.AddToRoleAsync(user, "Admin");
-
-			using (var context = new ApplicationDbContext(options))
-			{
-				var usersInAdminRoles = await userManager.Object.GetUsersInRoleAsync("Admin");
-				Assert.IsTrue(usersInAdminRoles.Any(x => x.UserName == user.UserName));
-
-				context.Users.Remove(user);
-				context.Roles.RemoveRange(roles);
-				await context.SaveChangesAsync();
-			}
-		}
-
-		[Test]
-		public async Task RegisterAsync_AsUser()
+		public async Task RegisterAsync_WithRoles(string role)
 		{
 			var roles = new IdentityRole[]
 			{
@@ -307,13 +263,13 @@ namespace CryptoDoge.DLL.UnitTests
 				await context.SaveChangesAsync();
 			}
 
-			userManager.Setup(r => r.AddToRoleAsync(It.IsAny<User>(), "User")).Returns(Task.FromResult(IdentityResult.Success));
-			userManager.Setup(r => r.GetUsersInRoleAsync("User")).Returns(Task.FromResult(new List<User> { user } as IList<User>));
-			await userManager.Object.AddToRoleAsync(user, "User");
+			userManager.Setup(r => r.AddToRoleAsync(It.IsAny<User>(), role)).Returns(Task.FromResult(IdentityResult.Success));
+			userManager.Setup(r => r.GetUsersInRoleAsync(role)).Returns(Task.FromResult(new List<User> { user } as IList<User>));
+			await userManager.Object.AddToRoleAsync(user, role);
 
 			using (var context = new ApplicationDbContext(options))
 			{
-				var usersInUserRole = await userManager.Object.GetUsersInRoleAsync("User");
+				var usersInUserRole = await userManager.Object.GetUsersInRoleAsync(role);
 				Assert.IsTrue(usersInUserRole.Any(x => x.UserName == user.UserName));
 
 				context.Users.Remove(user);
