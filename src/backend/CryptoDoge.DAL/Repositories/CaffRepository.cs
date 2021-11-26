@@ -41,13 +41,12 @@ namespace CryptoDoge.DAL.Repositories
                                     .Any(caption => caption.ToLower().Contains(query.ToLower())))
                 .ToListAsync();
 
-        public async Task<IEnumerable<Caff>> SearchCaffsByTags(List<string> queryTags)
+        public async Task<IEnumerable<Caff>> SearchCaffsByTags(List<string> queryTags) 
             => await dbContext.Caffs
                 .Where(caff => caff.Ciffs
                                     .SelectMany(ciff => ciff.Tags)
                                     .Select(tag => tag.Value)
-                                    .Intersect(queryTags)
-                                    .Any())
+                                    .Any(tag => queryTags.Contains(tag)))
                 .ToListAsync();
 
         public async Task DeleteCaffAsync(Caff caff)

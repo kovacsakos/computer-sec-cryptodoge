@@ -27,7 +27,7 @@ namespace CryptoDoge.BLL.UnitTests
         private readonly IConfiguration configuration;
         private readonly IMapper mapper;
         private ApplicationDbContext dbContext;
-        private ICaffRepository caffRepo;
+        private ICaffRepository caffRepository;
         private User user;
 
         public ImagingServiceTests()
@@ -50,8 +50,8 @@ namespace CryptoDoge.BLL.UnitTests
                             .UseInMemoryDatabase(databaseName: "CryptoDogeTestDb").Options;
             dbContext = new ApplicationDbContext(options);
             await dbContext.Database.EnsureDeletedAsync();
-            caffRepo = new CaffRepository(dbContext);
-            imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration, caffRepo, mapper);
+            caffRepository = new CaffRepository(dbContext);
+            imagingService = new ImagingService(new ConsoleLogger<ImagingService>(), configuration, caffRepository, mapper);
 
             user = new User { Id = "c193a1f7-0000-0000-0000-976f4811bf5f" };
         }
