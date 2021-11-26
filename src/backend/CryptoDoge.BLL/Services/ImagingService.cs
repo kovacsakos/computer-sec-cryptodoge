@@ -63,10 +63,10 @@ namespace CryptoDoge.BLL.Services
             return caffs.Select(caff => mapper.Map<CaffDto>(caff));
         }
 
-        public async Task<CaffDto> GetCaffByIdAsync(string id)
+        public async Task<CaffDto> GetCaffByIdAsync(string caffId)
         {
             using var loggerScope = new LoggerScope(logger);
-            var caff = await caffRepository.GetCaffByIdAsync(id);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
             return mapper.Map<CaffDto>(caff);
         }
 
@@ -84,10 +84,10 @@ namespace CryptoDoge.BLL.Services
             return result.Select(caff => mapper.Map<CaffDto>(caff));
         }
 
-        public async Task DeleteCaffImagesAsync(string id)
+        public async Task DeleteCaffImagesAsync(string caffId)
         {
             using var loggerScope = new LoggerScope(logger);
-            var caff = await caffRepository.GetCaffByIdAsync(id);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
 
             if (caff != null)
             {
@@ -120,10 +120,10 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task UpdateCommentOnCaffAsync(string id, string comment)
+        public async Task UpdateCommentOnCaffAsync(string caffCommentId, string comment)
         {
             using var loggerScope = new LoggerScope(logger);
-            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(caffCommentId);
             if (caffComment != null)
             {
                 caffComment.Comment = comment;
@@ -135,10 +135,10 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task DeleteCaffCommentAsync(string id)
+        public async Task DeleteCaffCommentAsync(string caffCommentId)
         {
             using var loggerScope = new LoggerScope(logger);
-            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(caffCommentId);
             if(caffComment != null)
             {
                 await caffRepository.DeleteCaffCommentAsync(caffComment);

@@ -97,7 +97,6 @@ namespace CryptoDoge.Server.Controllers
         [HttpGet("{caffId}/download")]
         public IActionResult DownloadCaff(string caffId)
         {
-            // TODO
             throw new NotImplementedException();
         }
 
