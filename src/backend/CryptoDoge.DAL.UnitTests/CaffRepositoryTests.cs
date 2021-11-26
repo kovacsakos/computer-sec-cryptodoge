@@ -1,6 +1,7 @@
 ﻿using CryptoDoge.DAL.Repositories;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Interfaces;
+using CryptoDoge.Shared;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using System;

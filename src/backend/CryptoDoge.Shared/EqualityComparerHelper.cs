@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace CryptoDoge.DAL.UnitTests
+namespace CryptoDoge.Shared
 {
-    internal static class EqualityComparerHelper
+    public static class EqualityComparerHelper
     {
         public static bool SequenceEqual<T>(this IList<T> x, IList<T> y, Func<T, T, bool> comparer)
         {
