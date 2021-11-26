@@ -284,6 +284,28 @@ namespace CryptoDoge.Server.Tests
         }
 
         [Test]
+        public async Task SearchByCaption_Null()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByCaption(null);
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        [Test]
+        public async Task SearchByCaption_EmptyString()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByCaption(new SearchByCaptionDto { Query = "" });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        [Test]
         public async Task SearchByTags_NoResult()
         {
             await UploadCaff();
@@ -298,6 +320,28 @@ namespace CryptoDoge.Server.Tests
         {
             var caffDto = await UploadCaff();
             var search = await imagesController.SearchCaffsByTags(new SearchByTagsDto { QueryTags = new List<string> { "mountains" } });
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        [Test]
+        public async Task SearchByTags_Null()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByTags(null);
+            Assert.IsInstanceOf<OkObjectResult>(search.Result);
+            var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
+            Assert.IsNotEmpty(list);
+            Assert.IsTrue(CaffDtoEquals(caffDto, list.Single()));
+        }
+
+        [Test]
+        public async Task SearchByTags_EmptyList()
+        {
+            var caffDto = await UploadCaff();
+            var search = await imagesController.SearchCaffsByTags(new SearchByTagsDto { QueryTags = new List<string>() });
             Assert.IsInstanceOf<OkObjectResult>(search.Result);
             var list = (search.Result as OkObjectResult).Value as List<CaffDto>;
             Assert.IsNotEmpty(list);
