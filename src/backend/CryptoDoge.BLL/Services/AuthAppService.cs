@@ -89,7 +89,7 @@ namespace CryptoDoge.BLL.Services
                 throw new AuthException("Couldn't create user. Try with different values");
             }
 
-            await userManager.AddToRoleAsync(createdUser, "User");
+            await userManager.AddToRoleAsync(createdUser, "USER");
 
             var result = await signInManager.PasswordSignInAsync(createdUser, registerDto.Password, true, false);
             if (!result.Succeeded)

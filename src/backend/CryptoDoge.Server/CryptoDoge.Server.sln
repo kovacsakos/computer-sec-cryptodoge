@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoDoge.DAL.UnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoDoge.BLL.UnitTests", "..\CryptoDoge.BLL.UnitTests\CryptoDoge.BLL.UnitTests.csproj", "{08E26C58-241A-4AA7-8D35-F654E3996675}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoDoge.Server.Tests", "..\CryptoDoge.Server.Tests\CryptoDoge.Server.Tests.csproj", "{09346477-A89F-4B50-BE12-A20B9BD4D3DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{08E26C58-241A-4AA7-8D35-F654E3996675}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08E26C58-241A-4AA7-8D35-F654E3996675}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08E26C58-241A-4AA7-8D35-F654E3996675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09346477-A89F-4B50-BE12-A20B9BD4D3DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09346477-A89F-4B50-BE12-A20B9BD4D3DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09346477-A89F-4B50-BE12-A20B9BD4D3DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09346477-A89F-4B50-BE12-A20B9BD4D3DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

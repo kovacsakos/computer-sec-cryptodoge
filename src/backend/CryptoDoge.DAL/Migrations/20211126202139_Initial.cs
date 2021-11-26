@@ -124,7 +124,7 @@ namespace CryptoDoge.DAL.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -175,7 +175,7 @@ namespace CryptoDoge.DAL.Migrations
                         column: x => x.UploadedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,7 +195,7 @@ namespace CryptoDoge.DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_CaffComments_Caffs_CaffId",
                         column: x => x.CaffId,
@@ -223,7 +223,7 @@ namespace CryptoDoge.DAL.Migrations
                         column: x => x.CaffId,
                         principalTable: "Caffs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -243,13 +243,23 @@ namespace CryptoDoge.DAL.Migrations
                         column: x => x.CiffId,
                         principalTable: "Ciffs",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "32c21592-1bcf-4aba-8e22-f4b587dc5bd1", "10d453e2-601d-4347-8bb3-6f29705c099a", "Admin", null });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "c6f3601b-21eb-4d98-b0e1-8fc2fe31e633", "c5bc4d95-d386-4d97-9ada-22725073858a", "User", null });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "52251c06-58a7-4fe4-885d-2a484034326d", 0, "997cca4a-069d-40c1-a2bb-7a7b982c12a8", "user@mail.com", false, false, null, "user@mail.com", "First User", "AQAAAAEAACcQAAAAECTcceAWunGyG9APyep4pox6zA6yXBDgIXiFre7cy0gmQG8TFT/FALXAzHWrOi+1iw==", null, false, null, "1479146b-ae4f-4421-be60-a101e3007fd4", false, "First User" });
+                values: new object[] { "52251c06-58a7-4fe4-885d-2a484034326d", 0, "ad3e24e3-5187-4c01-aeed-4311e67088b5", "user@mail.com", false, false, null, "user@mail.com", "First User", "AQAAAAEAACcQAAAAELue407gwUR7OAfwm47KW6737MIxK3GtZoaGHvRtc34hxK+ByMxstvq9S3kk34f8LA==", null, false, null, "de52b4c5-2cb1-4be9-8e6d-c212e1692d73", false, "First User" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

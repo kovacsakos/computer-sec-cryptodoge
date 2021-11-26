@@ -71,7 +71,7 @@ namespace CryptoDoge.Server
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer("Default", cfg =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;
                     cfg.SaveToken = true;
@@ -94,7 +94,7 @@ namespace CryptoDoge.Server
             {
                 options.AddPolicy("RequireLogin", new AuthorizationPolicyBuilder()
                      .RequireAuthenticatedUser()
-                     .AddAuthenticationSchemes("Default")
+                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                      .Build());
             });
             #endregion

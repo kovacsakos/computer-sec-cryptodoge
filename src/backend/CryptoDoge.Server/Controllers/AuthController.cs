@@ -48,7 +48,6 @@ namespace CryptoDoge.Server.Controllers
 		}
 
 		[Authorize(Policy = "RequireLogin")]
-		//[Authorize]
 		[HttpPost("logout")]
 		public async Task<ActionResult> Logout()
 		{

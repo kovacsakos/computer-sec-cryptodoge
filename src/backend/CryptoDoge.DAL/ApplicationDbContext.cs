@@ -60,11 +60,12 @@ namespace CryptoDoge.DAL
                     user1
                 });
 
+
             builder.Entity<IdentityRole>()
                 .HasData(new IdentityRole[]
                 {
-                    new IdentityRole("Admin"),
-                    new IdentityRole("User"),
+                    new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN"},
+                    new IdentityRole { Name = "USER", NormalizedName = "USER"},
                 });
         }
     }

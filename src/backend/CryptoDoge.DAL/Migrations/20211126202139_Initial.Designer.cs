@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CryptoDoge.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211125152358_Initial")]
+    [Migration("20211126202139_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -199,15 +199,15 @@ namespace CryptoDoge.DAL.Migrations
                         {
                             Id = "52251c06-58a7-4fe4-885d-2a484034326d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "997cca4a-069d-40c1-a2bb-7a7b982c12a8",
+                            ConcurrencyStamp = "ad3e24e3-5187-4c01-aeed-4311e67088b5",
                             Email = "user@mail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "user@mail.com",
                             NormalizedUserName = "First User",
-                            PasswordHash = "AQAAAAEAACcQAAAAECTcceAWunGyG9APyep4pox6zA6yXBDgIXiFre7cy0gmQG8TFT/FALXAzHWrOi+1iw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELue407gwUR7OAfwm47KW6737MIxK3GtZoaGHvRtc34hxK+ByMxstvq9S3kk34f8LA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "1479146b-ae4f-4421-be60-a101e3007fd4",
+                            SecurityStamp = "de52b4c5-2cb1-4be9-8e6d-c212e1692d73",
                             TwoFactorEnabled = false,
                             UserName = "First User"
                         });
@@ -238,6 +238,20 @@ namespace CryptoDoge.DAL.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "32c21592-1bcf-4aba-8e22-f4b587dc5bd1",
+                            ConcurrencyStamp = "10d453e2-601d-4347-8bb3-6f29705c099a",
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = "c6f3601b-21eb-4d98-b0e1-8fc2fe31e633",
+                            ConcurrencyStamp = "c5bc4d95-d386-4d97-9ada-22725073858a",
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

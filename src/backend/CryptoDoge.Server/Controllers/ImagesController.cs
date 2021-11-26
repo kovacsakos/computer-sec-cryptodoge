@@ -72,7 +72,7 @@ namespace CryptoDoge.Server.Controllers
             return Ok(await imagingService.SearchCaffsByTags(searchByTagsDto.QueryTags));
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "Admin, User")]
+        [Authorize(Policy = "RequireLogin", Roles = "ADMIN,USER")]
         [HttpPost("upload")]
         public async Task<ActionResult<CaffDto>> UploadCaff([FromForm] IFormFile file)
         {
@@ -100,7 +100,7 @@ namespace CryptoDoge.Server.Controllers
             throw new NotImplementedException();
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "Admin")]
+        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
         [HttpDelete("{caffId}")]
         public async Task<ActionResult> DeleteCaff(string caffId)
         {
@@ -123,7 +123,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "Admin, User")]
+        [Authorize(Policy = "RequireLogin", Roles = "ADMIN,USER")]
         [HttpPost("comment/{caffId}")]
         public async Task<ActionResult<string>> PostComment(string caffId, [FromBody] CaffCommentDto caffCommentDto)
         {
@@ -139,7 +139,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "Admin")]
+        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
         [HttpPut("comment/{caffCommentId}")]
         public async Task<ActionResult> UpdateComment(string caffCommentId, [FromBody] CaffCommentDto caffCommentDto)
         {
@@ -154,7 +154,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "Admin")]
+        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
         [HttpDelete("comment/{caffCommentId}")]
         public async Task<ActionResult> DeleteComment(string caffCommentId)
         {

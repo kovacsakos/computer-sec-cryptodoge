@@ -4,14 +4,16 @@ using CryptoDoge.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CryptoDoge.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211126202736_Initial2")]
+    partial class Initial2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,15 +199,15 @@ namespace CryptoDoge.DAL.Migrations
                         {
                             Id = "52251c06-58a7-4fe4-885d-2a484034326d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2cd5aa90-1677-4c4b-ab99-2320be680491",
+                            ConcurrencyStamp = "7e438bee-e648-4302-8614-c4227f835745",
                             Email = "user@mail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "user@mail.com",
                             NormalizedUserName = "First User",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKV3URihJdT4I6G5By/gHWDpiSke47Yx7fdvk6ZsXpiOj7TN26RgUb9tUz+C5RcwSg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBt5mhRTVDndah6o/96K/LwfbgVUjzMdp+NpmOryvhoTWMPFbFRHE1oLTc+IfuwIYw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ecf7ea14-b6ed-4d66-99c3-6f10cfe9ae31",
+                            SecurityStamp = "5772be96-4ea1-4c44-bb37-c1f161ec013d",
                             TwoFactorEnabled = false,
                             UserName = "First User"
                         });
@@ -240,17 +242,15 @@ namespace CryptoDoge.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "09d05665-9d91-4f57-84f6-9e69efaca56d",
-                            ConcurrencyStamp = "b9cc85ab-b2ff-4593-b2ef-c035cae79b4a",
-                            Name = "ADMIN",
-                            NormalizedName = "ADMIN"
+                            Id = "7fcb158b-f714-46cb-8faf-16883ab592fe",
+                            ConcurrencyStamp = "06de3e24-f2f1-488d-8dc8-da5a8ccb6862",
+                            Name = "ADMIN"
                         },
                         new
                         {
-                            Id = "8094f000-68d0-49e6-8513-3709085b49da",
-                            ConcurrencyStamp = "85f3a04b-2aa9-479e-9fed-66a21ca8817d",
-                            Name = "USER",
-                            NormalizedName = "USER"
+                            Id = "f83ae1dd-fb0c-446a-a734-ccde51cfb27e",
+                            ConcurrencyStamp = "7b9465c2-4c4a-4c2d-9031-b18980f681dc",
+                            Name = "USER"
                         });
                 });
 
