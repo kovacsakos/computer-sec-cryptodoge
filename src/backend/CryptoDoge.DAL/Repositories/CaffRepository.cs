@@ -2,6 +2,7 @@
 using CryptoDoge.Model.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.DAL.Repositories
@@ -21,21 +22,33 @@ namespace CryptoDoge.DAL.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Caff>> GetCaffsAsync()
-        {
-            return await dbContext.Caffs
-                .Include(x => x.Comments).ThenInclude(x => x.User)
-                .Include(x => x.Ciffs).ThenInclude(y => y.Tags)
+        public async Task<IEnumerable<Caff>> GetCaffsAsync() 
+            => await dbContext.Caffs
+                .Include(caff => caff.Comments).ThenInclude(caffComment => caffComment.User)
+                .Include(caff => caff.Ciffs).ThenInclude(ciff => ciff.Tags)
                 .ToListAsync();
-        }
 
-        public async Task<Caff> GetCaffByIdAsync(string caffId)
-        {
-            return await dbContext.Caffs
-                .Include(x => x.Comments).ThenInclude(x => x.User)
-                .Include(x => x.Ciffs).ThenInclude(y => y.Tags)
-                .SingleOrDefaultAsync(c => c.Id == caffId);
-        }
+        public async Task<Caff> GetCaffByIdAsync(string caffId) 
+            => await dbContext.Caffs
+                .Include(caff => caff.Comments).ThenInclude(caffComment => caffComment.User)
+                .Include(caff => caff.Ciffs).ThenInclude(ciff => ciff.Tags)
+                .SingleOrDefaultAsync(caff => caff.Id == caffId);
+
+        public async Task<IEnumerable<Caff>> SearchCaffsByCaption(string query)
+            => await dbContext.Caffs
+                .Where(caff => caff.Ciffs
+                                    .Select(ciff => ciff.Caption)
+                                    .Any(caption => caption.ToLower().Contains(query.ToLower())))
+                .ToListAsync();
+
+        public async Task<IEnumerable<Caff>> SearchCaffsByTags(List<string> queryTags)
+            => await dbContext.Caffs
+                .Where(caff => caff.Ciffs
+                                    .SelectMany(ciff => ciff.Tags)
+                                    .Select(tag => tag.Value)
+                                    .Intersect(queryTags)
+                                    .Any())
+                .ToListAsync();
 
         public async Task DeleteCaffAsync(Caff caff)
         {
@@ -43,9 +56,24 @@ namespace CryptoDoge.DAL.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task AddComment(CaffComment caffComment)
+        public async Task AddCaffCommentAsync(CaffComment caffComment)
         {
             await dbContext.CaffComments.AddAsync(caffComment);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task<CaffComment> GetCaffCommentByIdAsync(string id) 
+            => await dbContext.CaffComments.SingleOrDefaultAsync(caffComment => caffComment.Id == id);
+
+        public async Task UpdateCaffCommentAsync(CaffComment caffComment)
+        {
+            dbContext.Update(caffComment);
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteCaffCommentAsync(CaffComment caffComment)
+        {
+            dbContext.Remove(caffComment);
             await dbContext.SaveChangesAsync();
         }
     }

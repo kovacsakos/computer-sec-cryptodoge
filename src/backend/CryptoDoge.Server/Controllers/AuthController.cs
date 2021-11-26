@@ -1,18 +1,14 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Exceptions;
-using CryptoDoge.ParserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Server.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
+    [ApiController]
+	[Route("api/auth")]
 	[Produces("application/json")]
 	public class AuthController : ControllerBase
 	{

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace CryptoDoge.BLL.Services
 
             var newCaff = mapper.Map<Caff>(parsedCaff);
             newCaff.Id = Guid.NewGuid().ToString();
+            newCaff.UploadedBy = user;
 
             var ciffs = parsedCaff.Ciffs;
             if (ciffs.Count == 0)
@@ -54,6 +56,13 @@ namespace CryptoDoge.BLL.Services
             return await GetCaffByIdAsync(newCaff.Id);
         }
 
+        public async Task<IEnumerable<CaffDto>> GetCaffsAsync()
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffs = await caffRepository.GetCaffsAsync();
+            return caffs.Select(caff => mapper.Map<CaffDto>(caff));
+        }
+
         public async Task<CaffDto> GetCaffByIdAsync(string id)
         {
             using var loggerScope = new LoggerScope(logger);
@@ -61,7 +70,7 @@ namespace CryptoDoge.BLL.Services
             return mapper.Map<CaffDto>(caff);
         }
 
-        public async Task DeleteCaffImagesAsync(string id, User user)
+        public async Task DeleteCaffImagesAsync(string id)
         {
             using var loggerScope = new LoggerScope(logger);
             var caff = await caffRepository.GetCaffByIdAsync(id);
@@ -80,13 +89,13 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task CommentOnCaff(CaffCommentDto caffCommentDto, User user)
+        public async Task AddCaffCommentAsync(CaffCommentDto caffCommentDto)
         {
             using var loggerScope = new LoggerScope(logger);
             var caff = await caffRepository.GetCaffByIdAsync(caffCommentDto.CaffId);
             if (caff != null)
             {
-                await caffRepository.AddComment(new CaffComment
+                await caffRepository.AddCaffCommentAsync(new CaffComment
                 {
                     Comment = caffCommentDto.Comment,
                 });
@@ -94,6 +103,27 @@ namespace CryptoDoge.BLL.Services
             else
             {
                 throw new NotFoundException("Caff does not exists.", 404);
+            }
+        }
+
+        public async Task DeleteCaffCommentAsync(string id)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            if(caffComment != null)
+            {
+                await caffRepository.DeleteCaffCommentAsync(caffComment);
+            }
+        }
+
+        public async Task UpdateCommentOnCaffAsync(string id, CaffCommentUpdateDto caffCommentUpdateDto)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            if (caffComment != null)
+            {
+                caffComment.Comment = caffCommentUpdateDto.Comment;
+                await caffRepository.UpdateCaffCommentAsync(caffComment);
             }
         }
 
@@ -121,6 +151,20 @@ namespace CryptoDoge.BLL.Services
             newCiff.Id = parsedCiff.Id;
 
             return newCiff;
+        }
+
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByCaption(string query)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByCaption(query);
+            return result.Select(caff => mapper.Map<CaffDto>(caff));
+        }
+
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByTags(List<string> queryTags)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByTags(queryTags);
+            return result.Select(caff => mapper.Map<CaffDto>(caff));
         }
     }
 }

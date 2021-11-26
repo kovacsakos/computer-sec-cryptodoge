@@ -1,5 +1,4 @@
 ﻿using CryptoDoge.Model.Entities;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
