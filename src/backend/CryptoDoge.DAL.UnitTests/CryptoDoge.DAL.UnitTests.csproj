@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CryptoDoge.DAL\CryptoDoge.DAL.csproj" />
+    <ProjectReference Include="..\CryptoDoge.Shared\CryptoDoge.Shared.csproj" />
   </ItemGroup>
 
 </Project>
