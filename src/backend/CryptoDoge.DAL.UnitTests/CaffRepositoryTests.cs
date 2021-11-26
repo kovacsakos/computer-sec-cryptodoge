@@ -221,7 +221,8 @@ namespace CryptoDoge.DAL.UnitTests
 			if (!CaffEqualsWithoutCiffsAndComments(x, y))
 				return false;
 
-			return x.Ciffs.ToList().SequenceEqual(y.Ciffs.ToList(), CiffEquals);
+			return x.Ciffs.ToList().SequenceEqual(y.Ciffs.ToList(), CiffEquals) &&
+				x.Comments.ToList().SequenceEqual(y.Comments.ToList(), CaffCommentEquals);
 		}
 
 		private static bool CaffEqualsWithoutCiffsAndComments(Caff x, Caff y)
@@ -242,7 +243,7 @@ namespace CryptoDoge.DAL.UnitTests
 			if (!CaffCommentEqualsWithoutUserAndCaff(x, y))
 				return false;
 
-			return CaffEquals(x.Caff, y.Caff) && x.User.Id == y.User.Id;
+			return x.Caff.Id == y.Caff.Id && x.User.Id == y.User.Id;
 		}
 
         private static bool CaffCommentEqualsWithoutUserAndCaff(CaffComment x, CaffComment y) 
