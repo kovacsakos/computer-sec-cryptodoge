@@ -111,7 +111,7 @@ namespace CryptoDoge.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("comment/{id}")]
-        public async Task<ActionResult<CaffComment>> GetComment(string id)
+        public async Task<ActionResult<CaffCommentReturnDto>> GetComment(string id)
         {
             try
             {            

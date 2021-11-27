@@ -12,6 +12,7 @@ namespace CryptoDoge.BLL
 		public MapperProfiles()
 		{
 			CreateMap<RegisterDto, RegisterData>();
+			CreateMap<CaffComment, CaffCommentReturnDto>();
 
 			CreateMap<ParsedCaff, Caff>()
 				.ForMember(d => d.NumberOfAnimations, s => s.MapFrom(src => src.Num_anim));
