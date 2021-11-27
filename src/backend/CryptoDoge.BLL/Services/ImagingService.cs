@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Entities;
+using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
 using CryptoDoge.ParserService;
 using CryptoDoge.Shared;
@@ -10,10 +12,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Services
@@ -21,33 +21,31 @@ namespace CryptoDoge.BLL.Services
     public class ImagingService : IImagingService
     {
         private readonly ILogger<ImagingService> logger;
-        private readonly IConfiguration configuration;
-        private readonly string BasePath = string.Empty;
+        private readonly string BasePath;
         private readonly ICaffRepository caffRepository;
         private readonly IMapper mapper;
 
         public ImagingService(ILogger<ImagingService> logger, IConfiguration configuration, ICaffRepository caffRepository, IMapper mapper)
         {
             this.logger = logger;
-            this.configuration = configuration;
-
             BasePath = configuration["Imaging:BasePath"];
             this.caffRepository = caffRepository;
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<string>> SaveCaffImagesAsync(ParsedCaff parsedCaff)
+        public async Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff, User user)
         {
             using var loggerScope = new LoggerScope(logger);
 
             var newCaff = mapper.Map<Caff>(parsedCaff);
             newCaff.Id = Guid.NewGuid().ToString();
+            newCaff.UploadedBy = user;
 
             var ciffs = parsedCaff.Ciffs;
             if (ciffs.Count == 0)
             {
                 await caffRepository.AddNewCaffAsync(newCaff);
-                return Enumerable.Empty<string>();
+                return await GetCaffByIdAsync(newCaff.Id);
             }
 
             var newCiffs = new ConcurrentBag<Ciff>();
@@ -55,7 +53,115 @@ namespace CryptoDoge.BLL.Services
 
             newCaff.Ciffs = newCiffs.ToList();
             await caffRepository.AddNewCaffAsync(newCaff);
-            return newCiffs.Select(c => $"{c.Id}.png");
+            return await GetCaffByIdAsync(newCaff.Id);
+        }
+
+        public async Task<IEnumerable<CaffDto>> GetCaffsAsync()
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffs = await caffRepository.GetCaffsAsync();
+            return caffs.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
+        }
+
+        public async Task<CaffDto> GetCaffByIdAsync(string caffId)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
+            return mapper.Map<CaffDto>(caff);
+        }
+
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByCaption(string query)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByCaption(query);
+            return result.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
+        }
+
+        public async Task<IEnumerable<CaffDto>> SearchCaffsByTags(List<string> queryTags)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var result = await caffRepository.SearchCaffsByTags(queryTags);
+            return result.Select(caff => mapper.Map<CaffDto>(caff)).ToList();
+        }
+
+        public async Task DeleteCaffImagesAsync(string caffId)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
+
+            if (caff != null)
+            {
+                var path = Path.GetFullPath(BasePath);
+                foreach (var ciff in caff.Ciffs)
+                {
+                    var imageName = $"{ciff.Id}.png";
+                    var imagePath = Path.Combine(path, imageName);
+                    File.Delete(imagePath);
+                }
+
+                await caffRepository.DeleteCaffAsync(caff);
+            }
+        }
+
+        public async Task<string> AddCaffCommentAsync(string caffId, string comment, User user)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await caffRepository.GetCaffByIdAsync(caffId);
+            if (caff != null)
+            {
+                var id = Guid.NewGuid().ToString();
+                await caffRepository.AddCaffCommentAsync(new CaffComment
+                {
+                    Id = id,
+                    Comment = comment,
+                    Caff = caff,
+                    User = user,
+                });
+                return id;
+            } 
+            else
+            {
+                throw new NotFoundException("Caff does not exists.", 404);
+            }
+        }
+
+        public async Task<CaffComment> GetCaffCommentByIdAsync(string id)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
+            if (caffComment != null)
+            {
+                return caffComment;
+            }
+            else
+            {
+                throw new NotFoundException("Caff comment does not exists.", 404);
+            }
+        }
+
+        public async Task UpdateCommentOnCaffAsync(string caffCommentId, string comment)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(caffCommentId);
+            if (caffComment != null)
+            {
+                caffComment.Comment = comment;
+                await caffRepository.UpdateCaffCommentAsync(caffComment);
+            }
+            else
+            {
+                throw new NotFoundException("Caff comment does not exists.", 404);
+            }
+        }
+
+        public async Task DeleteCaffCommentAsync(string caffCommentId)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caffComment = await caffRepository.GetCaffCommentByIdAsync(caffCommentId);
+            if(caffComment != null)
+            {
+                await caffRepository.DeleteCaffCommentAsync(caffComment);
+            }
         }
 
         private Ciff SaveCiff(ParsedCiff parsedCiff)
@@ -64,17 +170,21 @@ namespace CryptoDoge.BLL.Services
             var pixels = parsedCiff.Pixels;
             using var bmp = new DirectBitmap(parsedCiff.Width, parsedCiff.Height);
 
-            for (int x = 0; x < pixels.Count; x++)
+            for (int y = 0; y < pixels.Count; y++)
             {
-                for (int y = 0; y < pixels[x].Count; y++)
+                for (int x = 0; x < pixels[y].Count; x++)
                 {
-                    bmp.SetPixel(y, x, Color.FromArgb(pixels[x][y][0], pixels[x][y][1], pixels[x][y][2]));
+                    bmp.SetPixel(x, y, Color.FromArgb(pixels[y][x][0], pixels[y][x][1], pixels[y][x][2]));
                 }
             }
 
             var imageName = $"{parsedCiff.Id}.png";
             var path = Path.GetFullPath(BasePath);
-            Directory.CreateDirectory(path);
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
 
             path = Path.Combine(path, imageName);
             bmp.Bitmap.Save(path);

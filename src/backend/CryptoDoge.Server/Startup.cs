@@ -10,13 +10,11 @@ using CryptoDoge.ParserService;
 using CryptoDoge.Server.Infrastructure.Services;
 using CryptoDoge.Shared;
 using FluentValidation.AspNetCore;
-using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.EntityFrameworkCore;
@@ -24,18 +22,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace CryptoDoge.Server
 {
@@ -57,9 +52,11 @@ namespace CryptoDoge.Server
             #region Identity
             services.AddIdentity<User, IdentityRole>(options =>
             {
-                options.Password.RequiredLength = 4;
-                options.Password.RequireDigit = false;
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 8;
 
 
                 options.User.RequireUniqueEmail = true;
@@ -74,7 +71,7 @@ namespace CryptoDoge.Server
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer("Default", cfg =>
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;
                     cfg.SaveToken = true;
@@ -97,7 +94,7 @@ namespace CryptoDoge.Server
             {
                 options.AddPolicy("RequireLogin", new AuthorizationPolicyBuilder()
                      .RequireAuthenticatedUser()
-                     .AddAuthenticationSchemes("Default")
+                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                      .Build());
             });
             #endregion
@@ -110,8 +107,9 @@ namespace CryptoDoge.Server
             services.AddControllers()
                     .AddFluentValidation(options =>
                     {
-                        options.RegisterValidatorsFromAssemblyContaining(typeof(LoginDtoValidator));
-                        options.RegisterValidatorsFromAssemblyContaining(typeof(RegisterDtoValidator));
+                        options.RegisterValidatorsFromAssemblyContaining<LoginDtoValidator>();
+                        options.RegisterValidatorsFromAssemblyContaining<RegisterDtoValidator>();
+                        options.RegisterValidatorsFromAssemblyContaining<CaffCommentDtoValidator>();
                     })
                     .AddJsonOptions(options =>
                     {
@@ -142,17 +140,17 @@ namespace CryptoDoge.Server
 
             services.AddSingleton<ICryptoRandomGenerator, CryptoRandomGenerator>();
 
-            services.AddTransient<IAuthAppService, AuthAppService>();
-            services.AddTransient<ITokenAppService, TokenAppService>();
             services.AddTransient<ICaffRepository, CaffRepository>();
             services.AddTransient<IAuthRepository, AuthRepository>();
-            services.AddTransient<IImagingService, ImagingService>();
 
+            services.AddTransient<IAuthAppService, AuthAppService>();
+            services.AddTransient<ITokenAppService, TokenAppService>();
+            services.AddTransient<IImagingService, ImagingService>();
 
             services.AddScoped<IParserService, ParserService.ParserService>();
 
         }
-        private string GetOperationId(ApiDescription e)
+        private static string GetOperationId(ApiDescription e)
         {
             var controllerName = e.ActionDescriptor.RouteValues["controller"];
 
@@ -160,7 +158,6 @@ namespace CryptoDoge.Server
             {
                 return $"{controllerName}_{controllerActionDescriptor.MethodInfo.Name}";
             }
-
             else
             {
                 var pathParts = e.RelativePath.Trim('/').Split('/').ToList();
@@ -181,10 +178,16 @@ namespace CryptoDoge.Server
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CryptoDoge.Server v1"));
             }
 
+            var imagesPath = Configuration["Imaging:BasePath"];
+            if (!Directory.Exists(imagesPath))
+            {
+                Directory.CreateDirectory(imagesPath);
+            }
+
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.GetFullPath(Configuration["Imaging:BasePath"])),
-                RequestPath = "/images"
+                FileProvider = new PhysicalFileProvider(Path.GetFullPath(imagesPath)),
+                RequestPath = "/images",
             });
 
             app.UseRouting();

@@ -4,15 +4,11 @@ using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.DAL.Repositories
 {
-	public class AuthRepository : IAuthRepository
+    public class AuthRepository : IAuthRepository
 	{
 		private readonly ApplicationDbContext dbContext;
 		private readonly UserManager<User> userManager;

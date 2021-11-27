@@ -3,33 +3,31 @@ using CryptoDoge.DAL.Repositories;
 using CryptoDoge.Model.DataTransferModels;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
-using CryptoDoge.Model.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.DLL.UnitTests
 {
-	public class AuthRepositoryTests
+    public class AuthRepositoryTests
 	{
 		private DbContextOptions<ApplicationDbContext> options;
 		private Mock<UserManager<User>> userManager;
-
 
 		[SetUp]
 		public void Setup()
 		{
 			options = new DbContextOptionsBuilder<ApplicationDbContext>()
-			.UseInMemoryDatabase(databaseName: "CryptoDogeTestDb")
-			.Options;
+							.UseInMemoryDatabase(databaseName: "CryptoDogeTestDb")
+							.Options;
 
 			var _store = new Mock<IUserStore<User>>();
 			userManager = new Mock<UserManager<User>>(_store.Object, null, null, null, null, null, null, null, null);
-
 		}
 
 		[Test]
@@ -50,7 +48,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -60,10 +57,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var refreshToken = "refreshToken";
-
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
-
+				var authRepository = new AuthRepository(context, userManager.Object);
 				var foundUser = await authRepository.GetUserByRefreshTokenAsync(refreshToken);
 
 				Assert.AreEqual(user.Id, foundUser.Id);
@@ -91,7 +85,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -101,9 +94,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var refreshToken = "nonExistentialRefreshToken";
-
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object);
 
 				try 
 				{ 
@@ -111,8 +102,7 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 				catch(AuthException e)
 				{
-					Assert.AreEqual(e.Message, "Nobody has that refresh token");
-
+					Assert.AreEqual("Nobody has that refresh token", e.Message);
 					return;
 				}
 				finally
@@ -144,7 +134,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -163,8 +152,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
+				var authRepository = new AuthRepository(context,userManager.Object);
 
 				try
 				{
@@ -182,7 +170,6 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 
 				Assert.Pass();
-
 			}
 		}
 
@@ -205,7 +192,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -223,9 +209,7 @@ namespace CryptoDoge.DLL.UnitTests
 
 			using (var context = new ApplicationDbContext(options))
 			{
-
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
+				var authRepository = new AuthRepository(context,userManager.Object);
 
 				try
 				{
@@ -233,7 +217,7 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 				catch (AuthException e)
 				{
-					Assert.AreEqual(e.Message, "Couldn't create the User");
+					Assert.AreEqual("Couldn't create the User", e.Message);
 					return;
 				}
 				finally
@@ -243,6 +227,54 @@ namespace CryptoDoge.DLL.UnitTests
 				}
 
 				Assert.Fail();
+			}
+		}
+
+		[TestCase("Admin")]
+		[TestCase("User")]
+		[Test]
+		public async Task RegisterAsync_WithRoles(string role)
+		{
+			var roles = new IdentityRole[]
+			{
+				new IdentityRole("Admin"),
+				new IdentityRole("User"),
+			};
+
+			User user;
+			using (var context = new ApplicationDbContext(options))
+			{
+				user = new User
+				{
+					Id = "id4",
+					UserName = "userName",
+					NormalizedUserName = "userName",
+					Email = "user@mail.com",
+					NormalizedEmail = "user@mail.com",
+					EmailConfirmed = false,
+					RefreshToken = "refreshToken"
+				};
+
+				var passwordHasher = new PasswordHasher<User>();
+				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
+
+				await context.Users.AddAsync(user);
+				await context.Roles.AddRangeAsync(roles);
+				await context.SaveChangesAsync();
+			}
+
+			userManager.Setup(r => r.AddToRoleAsync(It.IsAny<User>(), role)).Returns(Task.FromResult(IdentityResult.Success));
+			userManager.Setup(r => r.GetUsersInRoleAsync(role)).Returns(Task.FromResult(new List<User> { user } as IList<User>));
+			await userManager.Object.AddToRoleAsync(user, role);
+
+			using (var context = new ApplicationDbContext(options))
+			{
+				var usersInUserRole = await userManager.Object.GetUsersInRoleAsync(role);
+				Assert.IsTrue(usersInUserRole.Any(x => x.UserName == user.UserName));
+
+				context.Users.Remove(user);
+				context.Roles.RemoveRange(roles);
+				await context.SaveChangesAsync();
 			}
 		}
 
@@ -265,7 +297,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -284,9 +315,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
-
+				var authRepository = new AuthRepository(context,userManager.Object);
 				await authRepository.RemoveRefreshTokenAsync(user.Id);
 				var foundUser = await context.Users.SingleOrDefaultAsync(r => r.Id == user.Id);
 
@@ -295,7 +324,6 @@ namespace CryptoDoge.DLL.UnitTests
 
 				if(foundUser.RefreshToken == string.Empty)
 					Assert.Pass();
-
 
 				context.Users.Remove(user);
 				await context.SaveChangesAsync();
@@ -321,7 +349,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -340,8 +367,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var newRefreshToken = "newRefreshToken";
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
+				var authRepository = new AuthRepository(context,userManager.Object);
 
 				await authRepository.SaveRefreshTokenAsync(user, newRefreshToken);
 				var foundUser = await context.Users.SingleOrDefaultAsync(r => r.Id == user.Id);
@@ -351,7 +377,6 @@ namespace CryptoDoge.DLL.UnitTests
 
 				if (foundUser.RefreshToken == newRefreshToken)
 					Assert.Pass();
-
 
 				context.Users.Remove(foundUser);
 				await context.SaveChangesAsync();
@@ -377,7 +402,6 @@ namespace CryptoDoge.DLL.UnitTests
 				};
 
 				var passwordHasher = new PasswordHasher<User>();
-
 				user.PasswordHash = passwordHasher.HashPassword(user, "Password");
 
 				await context.Users.AddAsync(user);
@@ -397,8 +421,7 @@ namespace CryptoDoge.DLL.UnitTests
 			{
 				var nonExistentUser = new User { Id = "nonExistentId" };
 				var newRefreshToken = "newRefreshToken";
-				var authRepository = new AuthRepository(context,
-									userManager.Object);
+				var authRepository = new AuthRepository(context,userManager.Object);
 
 				try
 				{

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoDoge.Model.Entities
 {
@@ -23,6 +20,8 @@ namespace CryptoDoge.Model.Entities
         public int CreationMinute { get; set; }
 
         public string Creator { get; set; }
+
+        public User UploadedBy { get; set; }
 
         public ICollection<Ciff> Ciffs { get; set; }
         public ICollection<CaffComment> Comments { get; set; }

@@ -3,11 +3,7 @@ using CryptoDoge.BLL.Dtos;
 using CryptoDoge.Model.DataTransferModels;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.ParserService;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL
 {
@@ -25,6 +21,12 @@ namespace CryptoDoge.BLL
 			CreateMap<ParsedCiff, Ciff>()
 				.ForSourceMember(s => s.Pixels, o => o.DoNotValidate());
 
+			CreateMap<Ciff, CiffDto>();
+
+			CreateMap<Caff, CaffDto>()
+				.ForMember(d => d.Captions, s => s.MapFrom(x => x.Ciffs.Select(y => y.Caption).Distinct()))
+				.ForMember(d => d.Tags, s => s.MapFrom(x => x.Ciffs.SelectMany(y => y.Tags).Select(x => x.Value).Distinct()))
+				.ForMember(d => d.UploadedBy, s => s.MapFrom(x => x.UploadedBy.Id));
 		}
 
 		public class StringToCiffTagConverter : ITypeConverter<string, CiffTag>

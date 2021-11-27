@@ -1,16 +1,12 @@
 ﻿using CryptoDoge.Model.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
 namespace CryptoDoge.DAL
 {
-	public class ApplicationDbContext: IdentityDbContext<User>
+    public class ApplicationDbContext: IdentityDbContext<User>
 	{
 
 		public override DbSet<User> Users { get; set; }
@@ -36,7 +32,7 @@ namespace CryptoDoge.DAL
 
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
-                relationship.DeleteBehavior = DeleteBehavior.NoAction;
+                relationship.DeleteBehavior = DeleteBehavior.Cascade;
             }
 
             SeedData(builder);
@@ -62,6 +58,14 @@ namespace CryptoDoge.DAL
                 .HasData(new User[]
                 {
                     user1
+                });
+
+
+            builder.Entity<IdentityRole>()
+                .HasData(new IdentityRole[]
+                {
+                    new IdentityRole { Name = "ADMIN", NormalizedName = "ADMIN"},
+                    new IdentityRole { Name = "USER", NormalizedName = "USER"},
                 });
         }
     }

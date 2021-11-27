@@ -1,14 +1,9 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.ValidationDtos
 {
-	public class RegisterDtoValidator : AbstractValidator<RegisterDto>
+    public class RegisterDtoValidator : AbstractValidator<RegisterDto>
 	{
 		public RegisterDtoValidator()
 		{
@@ -18,8 +13,12 @@ namespace CryptoDoge.BLL.ValidationDtos
 			RuleFor(ent => ent.UserName)
 				.NotEmpty().WithMessage("Username is required");
 			RuleFor(ent => ent.Password)
-				.MinimumLength(4).WithMessage("Password must be at least 4 character")
-				.NotEmpty().WithMessage("Password is required");
+				.MinimumLength(8).WithMessage("Password must be at least 8 character")
+				.NotEmpty().WithMessage("Password is required")
+				.Matches("[A-Z]").WithMessage("Password must contain one or more capital letters.")
+				.Matches("[a-z]").WithMessage("Password must contain one or more lowercase letters.")
+				.Matches(@"\d").WithMessage("Password must contain one or more digits.")
+				.Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("Password must contain one or more special characters.");
 		}
 	}
 }
