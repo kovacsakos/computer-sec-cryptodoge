@@ -1,8 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { ImagesService } from './../../../../generated/client/api/images.service';
 import { CiffDto } from './../../../../generated/client/model/ciffDto';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { CaffDto } from 'generated/client';
 import { environment } from 'src/environments/environment';
 
@@ -20,7 +17,9 @@ export class CaffAnimatorComponent implements OnInit, OnDestroy {
   currentSrc: string;
   private currentIdx = 0;
 
-  constructor() {  }
+  constructor() { 
+    /* Empty */
+   }
 
   ngOnInit() {
     this.looper(this.getNextCiff());
