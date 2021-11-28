@@ -12,6 +12,7 @@ namespace CryptoDoge.BLL
 		public MapperProfiles()
 		{
 			CreateMap<RegisterDto, RegisterData>();
+			CreateMap<CaffComment, CaffCommentReturnDto>();
 
 			CreateMap<ParsedCaff, Caff>()
 				.ForMember(d => d.NumberOfAnimations, s => s.MapFrom(src => src.Num_anim));
@@ -19,7 +20,8 @@ namespace CryptoDoge.BLL
 			CreateMap<string, CiffTag>().ConvertUsing<StringToCiffTagConverter>();
 
 			CreateMap<ParsedCiff, Ciff>()
-				.ForSourceMember(s => s.Pixels, o => o.DoNotValidate());
+				.ForSourceMember(s => s.Pixels, o => o.DoNotValidate())
+				.ForMember(d => d.Tags, src => src.MapFrom(s => s.Tags.Select(t => new CiffTag() { Value = t })));
 
 			CreateMap<Ciff, CiffDto>();
 

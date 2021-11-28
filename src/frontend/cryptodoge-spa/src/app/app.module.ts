@@ -16,6 +16,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import {PaginatorModule} from 'primeng/paginator';
 import {PanelModule} from 'primeng/panel';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CaffAnimatorComponent } from './components/caff-animator/caff-animator.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    ProfileComponent
+    ProfileComponent,
+    CaffAnimatorComponent
   ],
   imports: [
     BrowserModule,
