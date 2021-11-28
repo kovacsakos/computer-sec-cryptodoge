@@ -20,7 +20,8 @@ namespace CryptoDoge.BLL
 			CreateMap<string, CiffTag>().ConvertUsing<StringToCiffTagConverter>();
 
 			CreateMap<ParsedCiff, Ciff>()
-				.ForSourceMember(s => s.Pixels, o => o.DoNotValidate());
+				.ForSourceMember(s => s.Pixels, o => o.DoNotValidate())
+				.ForMember(d => d.Tags, src => src.MapFrom(s => s.Tags.Select(t => new CiffTag() { Value = t })));
 
 			CreateMap<Ciff, CiffDto>();
 
