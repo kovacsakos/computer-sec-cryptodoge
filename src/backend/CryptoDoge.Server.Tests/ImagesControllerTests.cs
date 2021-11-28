@@ -186,7 +186,7 @@ namespace CryptoDoge.Server.Tests
             var comment = await imagesController.GetComment(commentId);
             Assert.IsInstanceOf<OkObjectResult>(comment.Result);
             var caffCommentResult = (comment.Result as OkObjectResult).Value;
-            var caffComment = caffCommentResult as CaffComment;
+            var caffComment = caffCommentResult as CaffCommentReturnDto;
 
             Assert.IsNotNull(caffComment);
             Assert.AreEqual("Valami", caffComment.Comment);
@@ -210,7 +210,7 @@ namespace CryptoDoge.Server.Tests
             Assert.IsInstanceOf<OkObjectResult>(comment.Result);
 
             var caffCommentResult = (comment.Result as OkObjectResult).Value;
-            var caffComment = caffCommentResult as CaffComment;
+            var caffComment = caffCommentResult as CaffCommentReturnDto;
 
             Assert.IsNotNull(caffComment);
             Assert.AreEqual("Update", caffComment.Comment);
@@ -390,7 +390,7 @@ namespace CryptoDoge.Server.Tests
                 return false;
 
             return x.Ciffs.ToList().SequenceEqual(y.Ciffs.ToList(), CiffDtoEquals) &&
-                   x.Comments.ToList().SequenceEqual(y.Comments.ToList(), CaffCommentEquals) &&
+                   x.Comments.ToList().SequenceEqual(y.Comments.ToList(), CaffCommentReturnDtoEquals) &&
                    x.Captions.ToList().SequenceEqual(y.Captions.ToList()) &&
                    x.Tags.ToList().SequenceEqual(y.Tags.ToList());
         }
@@ -400,6 +400,11 @@ namespace CryptoDoge.Server.Tests
 
         private static bool CiffDtoEquals(CiffDto x, CiffDto y)
             => EqualityComparerHelper.PropertiesEqual(x, y);
+
+        private static bool CaffCommentReturnDtoEquals(CaffCommentReturnDto x, CaffCommentReturnDto y)
+        {
+            return x.Comment == y.Comment && x.Id == y.Id && x.CaffId == y.CaffId && x.UserId == y.UserId;
+        }
 
         private static bool CaffCommentEquals(CaffComment x, CaffComment y)
         {

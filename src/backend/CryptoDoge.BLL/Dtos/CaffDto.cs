@@ -30,7 +30,7 @@ namespace CryptoDoge.BLL.Dtos
 
         public ICollection<CiffDto> Ciffs { get; set; }
 
-        public ICollection<CaffComment> Comments { get; set; }
+        public ICollection<CaffCommentReturnDto> Comments { get; set; }
 
         public DateTime CreationDate => new(CreationYear, CreationMonth, CreationDay, CreationHour, CreationMinute, 0);
     }

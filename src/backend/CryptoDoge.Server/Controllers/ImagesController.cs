@@ -2,6 +2,7 @@
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
+using CryptoDoge.Model.Interfaces;
 using CryptoDoge.ParserService;
 using CryptoDoge.Server.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +24,9 @@ namespace CryptoDoge.Server.Controllers
     {
         private readonly IParserService parserService;
         private readonly IImagingService imagingService;
-        private readonly IdentityService identityService;
+        private readonly IIdentityService identityService;
 
-        public ImagesController(IParserService parserService, IImagingService imagingService, IdentityService identityService)
+        public ImagesController(IParserService parserService, IImagingService imagingService, IIdentityService identityService)
         {
             this.parserService = parserService ?? throw new ArgumentNullException(nameof(parserService));
             this.imagingService = imagingService ?? throw new ArgumentNullException(nameof(imagingService));
@@ -123,7 +124,7 @@ namespace CryptoDoge.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("comment/{id}")]
-        public async Task<ActionResult<CaffComment>> GetComment(string id)
+        public async Task<ActionResult<CaffCommentReturnDto>> GetComment(string id)
         {
             try
             {

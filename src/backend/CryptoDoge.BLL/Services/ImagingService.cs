@@ -150,13 +150,13 @@ namespace CryptoDoge.BLL.Services
             }
         }
 
-        public async Task<CaffComment> GetCaffCommentByIdAsync(string id)
+        public async Task<CaffCommentReturnDto> GetCaffCommentByIdAsync(string id)
         {
             using var loggerScope = new LoggerScope(logger);
             var caffComment = await caffRepository.GetCaffCommentByIdAsync(id);
             if (caffComment != null)
             {
-                return caffComment;
+                return mapper.Map<CaffCommentReturnDto>(caffComment);
             }
             else
             {
