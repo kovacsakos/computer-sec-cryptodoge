@@ -1,6 +1,7 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using CryptoDoge.BLL.Interfaces;
 using CryptoDoge.Model.Entities;
+using CryptoDoge.Model.Exceptions;
 using CryptoDoge.ParserService;
 using CryptoDoge.Server.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.Server.Controllers
@@ -85,10 +87,11 @@ namespace CryptoDoge.Server.Controllers
 
                 var caff = parserService.GetCaffFromMemoryStream(caffStream);
                 var user = await identityService.GetCurrentUserAsync();
-                var result = await imagingService.SaveCaffImagesAsync(caff, user);
+                var result = await imagingService.SaveCaffAsync(caff, user, file);
+
 
                 return Ok(result);
-            } 
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -96,9 +99,18 @@ namespace CryptoDoge.Server.Controllers
         }
 
         [HttpGet("{caffId}/download")]
-        public IActionResult DownloadCaff(string caffId)
+        public async Task<IActionResult> DownloadCaff(string caffId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var fileBytes = await imagingService.GetRawCaffByIdAsync(caffId);
+                return File(fileBytes, MediaTypeNames.Application.Octet, $"{caffId}.caff");
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+
         }
 
         [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
@@ -114,7 +126,7 @@ namespace CryptoDoge.Server.Controllers
         public async Task<ActionResult<CaffComment>> GetComment(string id)
         {
             try
-            {            
+            {
                 return Ok(await imagingService.GetCaffCommentByIdAsync(id));
             }
             catch (Exception ex)
@@ -130,9 +142,9 @@ namespace CryptoDoge.Server.Controllers
             try
             {
                 var user = await identityService.GetCurrentUserAsync();
-                
+
                 return Ok(await imagingService.AddCaffCommentAsync(caffId, caffCommentDto.Comment, user));
-            } 
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

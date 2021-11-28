@@ -6,6 +6,7 @@ using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
 using CryptoDoge.ParserService;
 using CryptoDoge.Shared;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,6 +15,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Services
@@ -24,13 +26,36 @@ namespace CryptoDoge.BLL.Services
         private readonly string BasePath;
         private readonly ICaffRepository caffRepository;
         private readonly IMapper mapper;
+        private readonly string rawFolderPath;
 
         public ImagingService(ILogger<ImagingService> logger, IConfiguration configuration, ICaffRepository caffRepository, IMapper mapper)
         {
             this.logger = logger;
             BasePath = configuration["Imaging:BasePath"];
+            rawFolderPath = Path.Combine(BasePath, "raw");
             this.caffRepository = caffRepository;
             this.mapper = mapper;
+        }
+        public async Task<CaffDto> SaveCaffAsync(ParsedCaff parsedCaff, User user, IFormFile rawfile)
+        {
+            var result = await SaveCaffImagesAsync(parsedCaff, user);
+
+            if (rawfile.Length > 0)
+            {
+                var rawFolderPath = Path.Combine(BasePath, "raw");
+                if (!Directory.Exists(rawFolderPath))
+                {
+                    Directory.CreateDirectory(rawFolderPath);
+                }
+
+                string filePath = Path.Combine(rawFolderPath, $"{result.Id}.caff");
+                using (Stream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await rawfile.CopyToAsync(fileStream);
+                }
+            }
+
+            return result;
         }
 
         public async Task<CaffDto> SaveCaffImagesAsync(ParsedCaff parsedCaff, User user)
@@ -118,7 +143,7 @@ namespace CryptoDoge.BLL.Services
                     User = user,
                 });
                 return id;
-            } 
+            }
             else
             {
                 throw new NotFoundException("Caff does not exists.", 404);
@@ -158,7 +183,7 @@ namespace CryptoDoge.BLL.Services
         {
             using var loggerScope = new LoggerScope(logger);
             var caffComment = await caffRepository.GetCaffCommentByIdAsync(caffCommentId);
-            if(caffComment != null)
+            if (caffComment != null)
             {
                 await caffRepository.DeleteCaffCommentAsync(caffComment);
             }
@@ -193,6 +218,28 @@ namespace CryptoDoge.BLL.Services
             newCiff.Id = parsedCiff.Id;
 
             return newCiff;
+        }
+
+        public async Task<byte[]> GetRawCaffByIdAsync(string caffId)
+        {
+            using var loggerScope = new LoggerScope(logger);
+            var caff = await GetCaffByIdAsync(caffId);
+
+            if(caff == null)
+            {
+                throw new NotFoundException("Caff does not exists.");
+            }
+            var fileName = Path.Combine(rawFolderPath, $"{caff.Id}.caff");
+            BinaryReader binReader = new BinaryReader(File.Open(fileName, FileMode.Open));
+
+            byte[] fileBytes;
+            using (var stream = new MemoryStream())
+            {
+                binReader.BaseStream.CopyTo(stream);
+                fileBytes = stream.ToArray();
+            }
+
+            return fileBytes;
         }
     }
 }
