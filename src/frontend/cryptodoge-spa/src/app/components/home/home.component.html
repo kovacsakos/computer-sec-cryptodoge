@@ -1,8 +1,18 @@
-<p-card class="card">
-    <em class="pi pi-search"></em>
-    <p-autoComplete class="m-5" [(ngModel)]="searchValue" [suggestions]="tags" (completeMethod)="search($event)" [multiple]="true"></p-autoComplete>
-    <p-panel header="Results">
-        Content
+<p-card class="caff-big-card">
+    Tags:
+    <p-autoComplete class="mr-5" [(ngModel)]="tagSearchValues" [suggestions]="filteredTags"
+        (completeMethod)="filterTags($event)" [multiple]="true"></p-autoComplete>
+    Captions:
+    <p-autoComplete class="p-mb-5" [(ngModel)]="captionSearchValue" [suggestions]="filteredCaptions"
+        (completeMethod)="filterCaptions($event)"></p-autoComplete>
+    <p-button class="m-5" label="Search" icon="pi pi-search" iconPos="left" (onClick)="search()"></p-button>
+    <p-panel class="m-5" header="Results">
+        <p-card class="caff-card" *ngFor="let caff of caffs let i = index">
+            <app-caff-animator class="m-2" [caff]="caff"></app-caff-animator>
+            <p-panel class="caff-card">
+                <p-button class="m-4" [routerLink]="['details', caff.id]" label="Details"></p-button>
+                <p-button class="m-5" label="Download" icon="pi pi-download" iconPos="left" (click)="download(caff.id)"></p-button>
+            </p-panel>
+        </p-card>
     </p-panel>
-    <p-paginator [rows]="10" [totalRecords]="120" [rowsPerPageOptions]="[10,20,30]"></p-paginator>
 </p-card>

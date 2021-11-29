@@ -17,6 +17,7 @@ import {PaginatorModule} from 'primeng/paginator';
 import {PanelModule} from 'primeng/panel';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CaffAnimatorComponent } from './components/caff-animator/caff-animator.component';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { CaffAnimatorComponent } from './components/caff-animator/caff-animator.
     CardModule,
     PaginatorModule,
     PanelModule,
+    ButtonModule,
     BrowserAnimationsModule
   ],
   providers: [{ provide: BASE_PATH, useValue: environment.baseUrl }],

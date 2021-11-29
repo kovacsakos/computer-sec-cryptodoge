@@ -36,6 +36,8 @@ namespace CryptoDoge.DAL.Repositories
 
         public async Task<IEnumerable<Caff>> SearchCaffsByCaption(string query)
             => await dbContext.Caffs
+                .Include(caff => caff.Comments).ThenInclude(caffComment => caffComment.User)
+                .Include(caff => caff.Ciffs).ThenInclude(ciff => ciff.Tags)
                 .Where(caff => caff.Ciffs
                                     .Select(ciff => ciff.Caption)
                                     .Any(caption => caption.ToLower().Contains(query.ToLower())))
@@ -43,6 +45,8 @@ namespace CryptoDoge.DAL.Repositories
 
         public async Task<IEnumerable<Caff>> SearchCaffsByTags(List<string> queryTags) 
             => await dbContext.Caffs
+                .Include(caff => caff.Comments).ThenInclude(caffComment => caffComment.User)
+                .Include(caff => caff.Ciffs).ThenInclude(ciff => ciff.Tags)
                 .Where(caff => caff.Ciffs
                                     .SelectMany(ciff => ciff.Tags)
                                     .Select(tag => tag.Value)
