@@ -318,17 +318,6 @@ namespace CryptoDoge.BLL.UnitTests
                    x.Tags.ToList().SequenceEqual(y.Tags.ToList());
         }
 
-        private static bool CaffBinaryEquals(CaffDto x, CaffDto y)
-        {
-            if (!CaffEqualsWithoutSequenceProperties(x, y))
-                return false;
-
-            return x.Ciffs.ToList().SequenceEqual(y.Ciffs.ToList(), CiffDtoEquals) &&
-                   x.Comments.ToList().SequenceEqual(y.Comments.ToList(), CaffCommentEquals) &&
-                   x.Captions.ToList().SequenceEqual(y.Captions.ToList()) &&
-                   x.Tags.ToList().SequenceEqual(y.Tags.ToList());
-        }
-
         private static bool CaffEqualsWithoutSequenceProperties(CaffDto x, CaffDto y)
             => EqualityComparerHelper.PropertiesEqual(x, y, nameof(CaffDto.Ciffs), nameof(CaffDto.Captions), nameof(CaffDto.Comments), nameof(CaffDto.Tags));
 
