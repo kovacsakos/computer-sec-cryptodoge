@@ -1,7 +1,5 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { saveAs } from 'file-saver';
-import { Configuration } from '../../../../generated/client/configuration';
 import { CaffDto, ImagesService, SearchByCaptionDto, SearchByTagsDto } from 'generated/client';
 
 @Component({
@@ -78,21 +76,17 @@ export class HomeComponent implements OnInit {
       {
         queryTags: this.tagSearchValues
       };
-      this.imagesService.imagesSearchCaffsByTags(tagsQueryObject).subscribe(res => {
-        this.caffs = this.caffs.concat(res)
+      this.imagesService.imagesSearchCaffsByTags(tagsQueryObject).subscribe(caffsByTags => {
+        this.caffs = this.caffs.concat(caffsByTags)
         if (this.captionSearchValue) {
           let captionQueryObject: SearchByCaptionDto =
           {
             query: this.captionSearchValue
           };
-          this.imagesService.imagesSearchCaffsByCaption(captionQueryObject).subscribe(res => {
-            res.forEach(caff => {
-              if (!this.caffs.some(c => c.id == caff.id)) {
-                this.caffs.push(caff);
-              }
-            });
+          this.imagesService.imagesSearchCaffsByCaption(captionQueryObject).subscribe(caffsByCaption => {
+            this.updateCaffsByCaption(caffsByCaption);
             if (this.tagSearchValues.length == 0 && this.captionSearchValue.length == 0) {
-              this.imagesService.imagesGetCaffs().subscribe(res => this.caffs = res)
+              this.imagesService.imagesGetCaffs().subscribe(allCaffs => this.caffs = allCaffs)
             }
           });
         }
@@ -105,17 +99,20 @@ export class HomeComponent implements OnInit {
           query: this.captionSearchValue
         };
         this.imagesService.imagesSearchCaffsByCaption(captionQueryObject).subscribe(res => {
-          res.forEach(caff => {
-            if (!this.caffs.some(c => c.id == caff.id)) {
-              this.caffs.push(caff);
-            }
-          });
+          this.updateCaffsByCaption(res);
           if (this.tagSearchValues.length == 0 && this.captionSearchValue.length == 0) {
-            this.imagesService.imagesGetCaffs().subscribe(res => this.caffs = res)
+            this.imagesService.imagesGetCaffs().subscribe(allCaffs => this.caffs = allCaffs)
           }
         });
       }
     }
+  }
 
+  updateCaffsByCaption(caffResult: CaffDto[]){
+    caffResult.forEach(caff => {
+      if (!this.caffs.some(c => c.id == caff.id)) {
+        this.caffs.push(caff);
+      }
+    });
   }
 }

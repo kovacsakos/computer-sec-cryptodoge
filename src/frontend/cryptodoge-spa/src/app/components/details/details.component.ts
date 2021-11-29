@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class DetailsComponent implements OnInit {
 
-  id:String;
+  id:string;
   constructor(private route: ActivatedRoute) {
     this.id = this.route.snapshot.params.id;
    }
