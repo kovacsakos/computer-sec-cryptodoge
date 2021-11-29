@@ -10,6 +10,7 @@ using CryptoDoge.Model.Interfaces;
 using CryptoDoge.ParserService;
 using CryptoDoge.Services.UnitTests.Helpers;
 using CryptoDoge.Shared;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -69,11 +70,18 @@ namespace CryptoDoge.BLL.UnitTests
         }
 
         [TearDown]
-        public void GlobalTeardown() => Directory.Delete(BasePath, recursive: true);
+        public void GlobalTeardown()
+        {
+            DirectoryInfo di = new DirectoryInfo(BasePath);
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+        }
 
         [Test]
         public async Task SaveCaffImages_1caffAsync()
-        {       
+        {
             var savedCaff = await imagingService.SaveCaffImagesAsync(parsedCaff, user);
             Assert.AreEqual(parsedCaff.Num_anim, savedCaff.NumberOfAnimations);
 
@@ -146,6 +154,38 @@ namespace CryptoDoge.BLL.UnitTests
         }
 
         [Test]
+        public async Task GetCaffRawByIdAsync_NoResult()
+        {
+            await imagingService.SaveCaffImagesAsync(parsedCaff, user);
+            var exception = await Task.FromResult(
+                Assert.ThrowsAsync<NotFoundException>(async () => await imagingService.GetRawCaffByIdAsync("notexistingcaffid")));
+            Assert.AreEqual("Caff does not exists.", exception.Message);
+        }
+
+        [Test]
+        public async Task GetCaffRawByIdAsync_HasResult()
+        {
+            byte[] fileBytes;
+            using (BinaryReader binReader = new BinaryReader(File.Open(@"TestData\1.caff", FileMode.Open)))
+            {
+
+
+                using (var stream = new MemoryStream())
+                {
+                    binReader.BaseStream.CopyTo(stream);
+                    fileBytes = stream.ToArray();
+                }
+            }
+
+            var memoryStream = new MemoryStream(fileBytes);
+
+            var savedCaff = await imagingService.SaveCaffAsync(parsedCaff, user, new FormFile(memoryStream, 0, fileBytes.Length, "caff", "c.caff"));
+            var result = await imagingService.GetRawCaffByIdAsync(savedCaff.Id);
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.Length > 0);
+        }
+
+        [Test]
         public async Task DeleteCaffImagesAsync()
         {
             var savedCaff = await imagingService.SaveCaffImagesAsync(parsedCaff, user);
@@ -155,14 +195,14 @@ namespace CryptoDoge.BLL.UnitTests
             {
                 var fullPath = Path.Combine(basePath, $"{ciff.Id}.png");
                 Assert.IsFalse(File.Exists(fullPath));
-            }     
+            }
         }
 
         [Test]
         public async Task AddCaffCommentAsync_ToNotExistingCaff()
         {
             var exception = await Task.FromResult(
-                Assert.ThrowsAsync<NotFoundException>(async () => await imagingService.AddCaffCommentAsync("notexistingcaffid", Comment, user)));        
+                Assert.ThrowsAsync<NotFoundException>(async () => await imagingService.AddCaffCommentAsync("notexistingcaffid", Comment, user)));
             Assert.AreEqual("Caff does not exists.", exception.Message);
         }
 

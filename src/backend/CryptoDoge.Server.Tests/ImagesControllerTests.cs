@@ -136,6 +136,29 @@ namespace CryptoDoge.Server.Tests
         }
 
         [Test]
+        public async Task DownloadCaffByIdAsync_NoResult()
+        {
+            var response = (await imagesController.DownloadCaff("notexisting"));
+            Assert.IsInstanceOf<NotFoundResult>(response);
+        }
+
+        [Test]
+        public async Task DownloadCaffByIdAsync_AfterUpload()
+        {
+            var caffDto = await UploadCaff();
+            var response = await imagesController.DownloadCaff(caffDto.Id);
+            Assert.IsInstanceOf<FileContentResult>(response);
+            var responseResult = (response as FileContentResult);
+            var caffResultName = responseResult.FileDownloadName;
+
+            Assert.IsNotNull(responseResult);
+            Assert.IsTrue(responseResult.FileContents.Length > 0);
+            Assert.AreEqual(caffDto.Id+".caff", caffResultName);
+
+            await CleanUp(caffDto.Id);
+        }
+
+        [Test]
         public async Task GetCaffComment_NotExist()
         {
             var response = (await imagesController.GetComment("id"));
