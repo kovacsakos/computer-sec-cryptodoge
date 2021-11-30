@@ -6,6 +6,7 @@ using CryptoDoge.Model.DataTransferModels;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
+using CryptoDoge.Services.UnitTests.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -46,7 +47,8 @@ namespace CryptoDoge.BLL.UnitTests
 								tokenService.Object,
 								authRepository.Object,
 								mapper.Object,
-								identityService.Object);
+								identityService.Object,
+								new ConsoleLogger<AuthAppService>());
 		}
 
 		[Test]
@@ -63,7 +65,7 @@ namespace CryptoDoge.BLL.UnitTests
 
 			userManager.Setup(r => r.FindByEmailAsync(It.IsAny<string>())).Returns(Task.FromResult(user));
 
-			signInManager.Setup(r => r.PasswordSignInAsync(user, It.IsAny<string>(), true, false)).Returns(Task.FromResult(signInResult));
+			signInManager.Setup(r => r.PasswordSignInAsync(user, It.IsAny<string>(), true, true)).Returns(Task.FromResult(signInResult));
 
 			tokenService.Setup(r => r.CreateAccessToken(user)).Returns(Task.FromResult(accessToken));
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(user)).Returns(Task.FromResult(refreshToken));
@@ -111,7 +113,7 @@ namespace CryptoDoge.BLL.UnitTests
 
 			userManager.Setup(r => r.FindByEmailAsync(It.IsAny<string>())).Returns(Task.FromResult(user));
 
-			signInManager.Setup(r => r.PasswordSignInAsync(user, It.IsAny<string>(), true, false)).Returns(Task.FromResult(signInResult));
+			signInManager.Setup(r => r.PasswordSignInAsync(user, It.IsAny<string>(), true, true)).Returns(Task.FromResult(signInResult));
 
 			tokenService.Setup(r => r.CreateAccessToken(user)).Returns(Task.FromResult(accessToken));
 			tokenService.Setup(r => r.CreateRefreshTokenAsync(user)).Returns(Task.FromResult(refreshToken));

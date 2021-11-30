@@ -2,8 +2,10 @@
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
+using CryptoDoge.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.DAL.Repositories
@@ -12,27 +14,34 @@ namespace CryptoDoge.DAL.Repositories
 	{
 		private readonly ApplicationDbContext dbContext;
 		private readonly UserManager<User> userManager;
+        private readonly ILogger<AuthRepository> logger;
 
-		public AuthRepository(ApplicationDbContext dbContext,
-								UserManager<User> userManager)
+        public AuthRepository(ApplicationDbContext dbContext,
+								UserManager<User> userManager,
+								ILogger<AuthRepository> logger)
 		{
 			this.dbContext = dbContext;
 			this.userManager = userManager;
-		}
+            this.logger = logger;
+        }
 
 		public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
 		{
+			using var loggerScope = new LoggerScope(logger);
 			var userToFind = await dbContext.Users.SingleOrDefaultAsync(user => user.RefreshToken == refreshToken);
 
 			if (userToFind == null)
 			{
-				throw new AuthException("Nobody has that refresh token");
+				var ex =  new AuthException("Nobody has that refresh token");
+				logger.LogWarning(ex.Message);
+				throw ex;
 			}
 			return userToFind;
 		}
 
 		public async Task RegisterAsync(RegisterData registerData)
 		{
+			using var loggerScope = new LoggerScope(logger);
 			var user = new User
 			{
 				UserName = registerData.UserName,
@@ -45,7 +54,9 @@ namespace CryptoDoge.DAL.Repositories
 
 			if (!result.Succeeded)
 			{
-				throw new AuthException("Couldn't create the User");
+				var ex = new AuthException("Couldn't create the User");
+				logger.LogWarning(ex.Message);
+				throw ex;
 			}
 		}
 
@@ -65,7 +76,9 @@ namespace CryptoDoge.DAL.Repositories
 
 			if (userToFind == null)
 			{
-				throw new NotFoundException($"User was not found with ID: {userId}");
+				var ex = new NotFoundException($"User was not found with ID: {userId}");
+				logger.LogWarning(ex.Message);
+				throw ex;
 			}
 
 			userToFind.RefreshToken = refreshToken;

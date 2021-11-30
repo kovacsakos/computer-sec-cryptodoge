@@ -5,7 +5,9 @@ using CryptoDoge.Model.DataTransferModels;
 using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
 using CryptoDoge.Model.Interfaces;
+using CryptoDoge.Shared;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace CryptoDoge.BLL.Services
@@ -18,13 +20,15 @@ namespace CryptoDoge.BLL.Services
         private readonly IAuthRepository userRepository;
         private readonly IMapper mapper;
         private readonly IIdentityService identityService;
+        private readonly ILogger<AuthAppService> logger;
 
         public AuthAppService(UserManager<User> userManager,
                                 SignInManager<User> signInManager,
                                 ITokenAppService tokenService,
                                 IAuthRepository userRepository,
                                 IMapper mapper,
-                                IIdentityService identityService)
+                                IIdentityService identityService,
+                                ILogger<AuthAppService> logger)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -32,21 +36,27 @@ namespace CryptoDoge.BLL.Services
             this.userRepository = userRepository;
             this.mapper = mapper;
             this.identityService = identityService;
+            this.logger = logger;
         }
 
         public async Task<TokenDto> LoginAsync(LoginDto loginDto)
         {
+            using var loggerScope = new LoggerScope(logger);
             var user = await userManager.FindByEmailAsync(loginDto.EmailAddress);
 
             if (user == null)
             {
-                throw new AuthException("Wrong username or password");
+                var ex = new AuthException("Wrong username or password");
+                logger.LogWarning(ex.Message);
+                throw ex;
             }
 
             var result = await signInManager.PasswordSignInAsync(user, loginDto.Password, true, true);
             if (!result.Succeeded)
             {
-                throw new AuthException("Login was not successful");
+                var ex = new AuthException("Login was not successful");
+                logger.LogWarning(ex.Message);
+                throw ex;
             }
 
             return new TokenDto
@@ -65,6 +75,7 @@ namespace CryptoDoge.BLL.Services
 
         public async Task<TokenDto> RegisterAsync(RegisterDto registerDto)
         {
+            using var loggerScope = new LoggerScope(logger);
             var userId = await identityService.GetCurrentUserIdAsync();
             if (!string.IsNullOrEmpty(userId))
             {
@@ -76,7 +87,10 @@ namespace CryptoDoge.BLL.Services
 
             if (storedUser != null)
             {
-                throw new AuthException("Email taken");
+                var ex = new AuthException("Email taken");
+                logger.LogWarning(ex.Message);
+                throw ex;
+
             }
 
             var registerData = mapper.Map<RegisterData>(registerDto);
@@ -86,7 +100,9 @@ namespace CryptoDoge.BLL.Services
 
             if (createdUser == null)
             {
-                throw new AuthException("Couldn't create user. Try with different values");
+                var ex = new AuthException("Couldn't create user. Try with different values");
+                logger.LogWarning(ex.Message);
+                throw ex;
             }
 
             await userManager.AddToRoleAsync(createdUser, "USER");
@@ -94,7 +110,9 @@ namespace CryptoDoge.BLL.Services
             var result = await signInManager.PasswordSignInAsync(createdUser, registerDto.Password, true, false);
             if (!result.Succeeded)
             {
-                throw new AuthException("Can't login, try again");
+                var ex = new AuthException("Can't login, try again");
+                logger.LogWarning(ex.Message);
+                throw ex;
             }
 
             return new TokenDto
@@ -110,7 +128,10 @@ namespace CryptoDoge.BLL.Services
 
             if (user == null)
             {
-                throw new AuthException("There is no user with that specific refresh token");
+                var ex = new AuthException("There is no user with that specific refresh token");
+                logger.LogWarning(ex.Message);
+                throw ex;
+
             }
             return new TokenDto
             {
