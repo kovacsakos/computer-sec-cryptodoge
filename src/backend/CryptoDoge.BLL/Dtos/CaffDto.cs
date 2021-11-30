@@ -23,6 +23,7 @@ namespace CryptoDoge.BLL.Dtos
         public string Creator { get; set; }
 
         public string UploadedBy { get; set; }
+        public string UploadedByName { get; set; }
 
         public ICollection<string> Captions { get; set; }
 

@@ -12,5 +12,7 @@ namespace CryptoDoge.BLL.Dtos
         public string Comment { get; set; }
         public string CaffId { get; set; }
         public string UserId { get; set; }
+        public string UserName { get; set; }
+        public DateTime Added { get; set; }
     }
 }
