@@ -1,5 +1,7 @@
 ﻿using CryptoDoge.BLL.Dtos;
 using FluentValidation;
+using System;
+using System.Linq;
 
 namespace CryptoDoge.BLL.ValidationDtos
 {
@@ -16,7 +18,12 @@ namespace CryptoDoge.BLL.ValidationDtos
 				.Matches("[A-Z]").WithMessage("Password must contain one or more capital letters.")
 				.Matches("[a-z]").WithMessage("Password must contain one or more lowercase letters.")
 				.Matches(@"\d").WithMessage("Password must contain one or more digits.")
-				.Matches(@"[][""!@$%^&*(){}:;<>,.?/+_=|'~\\-]").WithMessage("Password must contain one or more special characters.");
+				.Must(ContainsNonAlphaNumeric).WithMessage("Password must contain one or more special characters.");
 		}
-	}
+
+        private bool ContainsNonAlphaNumeric(string arg)
+        {
+            return arg.Any(c => !char.IsLetterOrDigit(c));
+        }
+    }
 }

@@ -1,0 +1,53 @@
+.login-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.login-form {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+@media (min-width: 0) {
+    .login-container {
+        grid-template-columns: 0% 100% 0%;
+    }
+    @media (orientation: portrait) {
+        .login-form {
+            margin-top: 15%;
+            grid-column: 2;
+            grid-row: 1;
+        }
+    }
+}
+
+@media (min-width: 576px) {
+    .login-container {
+        grid-template-columns: 5% 90% 5%;
+    }
+}
+
+@media (min-width: 768px) {
+    .login-container {
+        grid-template-columns: 15% 70% 5%;
+    }
+}
+
+@media (min-width: 992px) {
+    .login-container {
+        grid-template-columns: 15% 70% 5%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .login-container {
+        grid-template-columns: 35% 30% 35%;
+    }
+}
+
+@media (min-width: 1400px) {
+    .login-container {
+        grid-template-columns: 35% 30% 35%;
+    }
+}

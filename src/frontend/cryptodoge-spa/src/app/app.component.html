@@ -1,3 +1,8 @@
+<p-toast position="bottom-right"></p-toast>
 <p-menubar class="p-mb-2" [model]="items">
+    <ng-container *ngIf="isLoggedIn">
+        <span class="name-span p-button p-button-info p-button-text">Bejelentkezve: {{userService.currentUser.email}}</span>
+        <button (click)="logout()" pButton label="Sign out" class="p-button-text me-3" icon="pi pi-sign-out"></button>
+    </ng-container>
 </p-menubar>
 <router-outlet></router-outlet>

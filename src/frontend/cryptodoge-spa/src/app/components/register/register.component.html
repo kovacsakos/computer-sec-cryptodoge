@@ -1,1 +1,44 @@
-<p>register works!</p>
+<div class="register-container h-100">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="register-form">
+        <div class="form-group">
+            <span class="p-float-label float-label">
+              <input id="input-username" type="text" class="form-control bg-transparent" pInputText  [ngClass]="{'ng-invalid ng-dirty' : userNameHasErrors() }" formControlName="username" >
+              <label for="input-username">Name</label>
+            </span>
+            <small id="username-help" [ngClass]="{'invisible' : !userNameHasErrors() }" class="p-error">Name is required</small>
+        </div>
+
+        <div class="form-group">
+            <span class="p-float-label float-label-margin">
+              <input id="input-email" [ngClass]="{'ng-invalid ng-dirty': emailHasErrors()}" class="form-control bg-transparent" pInputText formControlName="email">
+              <label for="input-email">E-mail address</label>
+            </span>
+            <small id="username-help" [ngClass]="{'invisible' : !emailHasErrors() }" class="p-error">E-mail is required</small>
+        </div>
+
+        <div class="form-group">
+            <span class="p-float-label float-label-margin">
+              <input pInputText id="input-password" type="password" class="form-control bg-transparent" [ngClass]="{'ng-invalid ng-dirty' : passwordHasErrors('empty') }" formControlName="password">
+              <label for="input-password">Password</label>
+            </span>
+            <small id="password-help" class="p-error" [ngClass]="{'invisible': !passwordHasErrors('empty')}">{{getPasswordErrorMessage()}}</small>
+        </div>
+
+        <div class="form-group">
+            <span class="p-float-label float-label-margin">
+              <input pInputText id="input-password-again" type="password" class="form-control bg-transparent" [ngClass]="{'ng-invalid ng-dirty' : confirmPasswordHasErrors('input')}" formControlName="confirmPassword">
+              <label for="input-password-again">Password again</label>
+            </span>
+            <small id="password-again-help" [ngClass]="{'invisible' : !confirmPasswordHasErrors('help') }" class="p-error">Passwords should match</small>
+
+        </div>
+
+        <div class="form group">
+            <re-captcha formControlName="recaptchaReactive"></re-captcha>
+        </div>
+
+        <div class="form-group text-center">
+            <button pButton pRipple class="w-100 float-label-margin" type="submit" label="Register" [disabled]="!registerForm.valid"></button>
+        </div>
+    </form>
+</div>
