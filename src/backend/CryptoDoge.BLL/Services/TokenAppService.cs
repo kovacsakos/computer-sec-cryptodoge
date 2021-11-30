@@ -40,10 +40,9 @@ namespace CryptoDoge.BLL.Services
 
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Name, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtClaimTypes.Name, user.UserName),
+                new Claim(JwtClaimTypes.Email, user.Email),
                 new Claim(JwtClaimTypes.Id, user.Id),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
             claims.AddRange(userRoles.Select(role => new Claim(JwtClaimTypes.Role, role)));
@@ -51,6 +50,11 @@ namespace CryptoDoge.BLL.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetSection("Authentication")["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var issuer = configuration.GetSection("Authentication")["JwtDefaultIssuer"];
+
+            if (userManager.IsInRoleAsync(user, "ADMIN").Result)
+            {
+                issuer = configuration.GetSection("Authentication")["JwtAdminIssuer"];
+            }
 
             var token = new JwtSecurityToken(
                issuer,

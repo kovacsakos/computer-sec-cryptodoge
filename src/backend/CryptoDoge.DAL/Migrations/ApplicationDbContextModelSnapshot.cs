@@ -197,17 +197,33 @@ namespace CryptoDoge.DAL.Migrations
                         {
                             Id = "52251c06-58a7-4fe4-885d-2a484034326d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2cd5aa90-1677-4c4b-ab99-2320be680491",
+                            ConcurrencyStamp = "61660001-62d2-4806-a9b0-b7141bfe4d99",
                             Email = "user@mail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "user@mail.com",
                             NormalizedUserName = "First User",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKV3URihJdT4I6G5By/gHWDpiSke47Yx7fdvk6ZsXpiOj7TN26RgUb9tUz+C5RcwSg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPi0Z7mU6IKPyG9W2A6GJs/TQmunLIXIDKWfaK/qB/Q2OjPpibENPwpuZzj7I1gqGQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ecf7ea14-b6ed-4d66-99c3-6f10cfe9ae31",
+                            SecurityStamp = "f16b3854-aa8e-4213-b70c-8a5402efb583",
                             TwoFactorEnabled = false,
                             UserName = "First User"
+                        },
+                        new
+                        {
+                            Id = "bcc978f4-aeb6-435f-8fa9-09f6c97735c9",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "9823fc53-0a21-4082-be6d-c4f31cf7ceed",
+                            Email = "admin@mail.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "admin@mail.com",
+                            NormalizedUserName = "Admin User",
+                            PasswordHash = "AQAAAAEAACcQAAAAENzwO+oM9CzflEr5sjQzfCVBnvdklkmMND+oB0jkwLxCsK7zK0d5sWoOk+KI+WBahg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "545bec4d-f190-4546-9fe8-42dd683a8dce",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin User"
                         });
                 });
 
@@ -240,15 +256,15 @@ namespace CryptoDoge.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "09d05665-9d91-4f57-84f6-9e69efaca56d",
-                            ConcurrencyStamp = "b9cc85ab-b2ff-4593-b2ef-c035cae79b4a",
+                            Id = "59381279-94ad-4e44-9817-d0c46350464a",
+                            ConcurrencyStamp = "22718be9-6b9f-45ad-9bf6-3d89a1496763",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "8094f000-68d0-49e6-8513-3709085b49da",
-                            ConcurrencyStamp = "85f3a04b-2aa9-479e-9fed-66a21ca8817d",
+                            Id = "34790367-a250-442c-bf25-2adbcf3f39a4",
+                            ConcurrencyStamp = "2274aaff-d2ca-4d11-9220-f5d0e80b9abf",
                             Name = "USER",
                             NormalizedName = "USER"
                         });
@@ -337,6 +353,18 @@ namespace CryptoDoge.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "52251c06-58a7-4fe4-885d-2a484034326d",
+                            RoleId = "34790367-a250-442c-bf25-2adbcf3f39a4"
+                        },
+                        new
+                        {
+                            UserId = "bcc978f4-aeb6-435f-8fa9-09f6c97735c9",
+                            RoleId = "59381279-94ad-4e44-9817-d0c46350464a"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
