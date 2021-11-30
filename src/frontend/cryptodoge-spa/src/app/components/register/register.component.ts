@@ -1,7 +1,7 @@
 import { RegisterDto } from './../../../../generated/client/model/registerDto';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'generated/client';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
 import { UserMainPageService } from 'src/app/services/user-main-page.service';
 import { Router } from '@angular/router';
@@ -51,12 +51,7 @@ export class RegisterComponent implements OnInit {
       }, error => {
         this.toast.error('Error during registration');
       }, () => {
-        if (this.userService.hasRole(['ADMIN'])) {
-          this.router.navigate(this.mainPageService.getMainPageForUser());
-        }
-        else {
-          this.router.navigate(this.mainPageService.getMainPageForUser());
-        }
+        this.router.navigate(this.mainPageService.getMainPageForUser());
       })
     }
   }

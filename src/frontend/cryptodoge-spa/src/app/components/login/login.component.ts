@@ -30,12 +30,7 @@ export class LoginComponent implements OnInit {
     }, error => {
       this.toast.error('Login failed');
     }, () => {
-      if (this.authService.hasRole(['ADMIN'])) {
-        this.router.navigate(this.mainPageService.getMainPageForUser());
-      }
-      else {
-        this.router.navigate(this.mainPageService.getMainPageForUser());
-      }
+      this.router.navigate(this.mainPageService.getMainPageForUser());
     });
   }
 

@@ -50,6 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    /* Empty */
   }
 
   logout() {
