@@ -230,16 +230,16 @@ namespace CryptoDoge.BLL.Services
                 throw new NotFoundException("Caff does not exists.");
             }
             var fileName = Path.Combine(rawFolderPath, $"{caff.Id}.caff");
-            BinaryReader binReader = new BinaryReader(File.Open(fileName, FileMode.Open));
-
-            byte[] fileBytes;
-            using (var stream = new MemoryStream())
+            using(BinaryReader binReader = new BinaryReader(File.Open(fileName, FileMode.Open)))
             {
-                binReader.BaseStream.CopyTo(stream);
-                fileBytes = stream.ToArray();
-            }
-
-            return fileBytes;
+                byte[] fileBytes;
+                using (var stream = new MemoryStream())
+                {
+                    binReader.BaseStream.CopyTo(stream);
+                    fileBytes = stream.ToArray();
+                }
+                return fileBytes;
+            };   
         }
     }
 }
