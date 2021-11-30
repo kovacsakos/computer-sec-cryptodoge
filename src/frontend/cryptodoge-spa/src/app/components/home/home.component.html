@@ -1,5 +1,5 @@
 <p-confirmPopup></p-confirmPopup>
-<p-card class="caff-big-card">
+<p-card *ngIf="isLoggedIn" class="caff-big-card">
     <div>
         Tags:
         <p-autoComplete class="mr-5" [(ngModel)]="tagSearchValues" [suggestions]="filteredTags" (completeMethod)="filterTags($event)" [multiple]="true"></p-autoComplete>
@@ -17,4 +17,7 @@
             </p-panel>
         </p-card>
     </p-panel>
+</p-card>
+<p-card *ngIf="!isLoggedIn" class="caff-big-card">
+    Please log in to use the application.
 </p-card>
