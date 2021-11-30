@@ -60,6 +60,9 @@ namespace CryptoDoge.DAL.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("CaffId")
                         .HasColumnType("nvarchar(450)");
 
@@ -197,15 +200,15 @@ namespace CryptoDoge.DAL.Migrations
                         {
                             Id = "52251c06-58a7-4fe4-885d-2a484034326d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "61660001-62d2-4806-a9b0-b7141bfe4d99",
+                            ConcurrencyStamp = "3475dbb0-2a20-423f-9191-02b8d7cfee88",
                             Email = "user@mail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "user@mail.com",
                             NormalizedUserName = "First User",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPi0Z7mU6IKPyG9W2A6GJs/TQmunLIXIDKWfaK/qB/Q2OjPpibENPwpuZzj7I1gqGQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFNttxaihr6nWw8ogBWs7UVtsj1QZ3RqWs6Hll9CdnKLBhQ0+wstBY9sCuxeVzQo7g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "f16b3854-aa8e-4213-b70c-8a5402efb583",
+                            SecurityStamp = "7fe8e3b7-80d9-4e3d-8aa7-499f781ad761",
                             TwoFactorEnabled = false,
                             UserName = "First User"
                         },
@@ -213,15 +216,15 @@ namespace CryptoDoge.DAL.Migrations
                         {
                             Id = "bcc978f4-aeb6-435f-8fa9-09f6c97735c9",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "9823fc53-0a21-4082-be6d-c4f31cf7ceed",
+                            ConcurrencyStamp = "0516812c-92a8-4b1d-bc77-8c625fad780b",
                             Email = "admin@mail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "admin@mail.com",
                             NormalizedUserName = "Admin User",
-                            PasswordHash = "AQAAAAEAACcQAAAAENzwO+oM9CzflEr5sjQzfCVBnvdklkmMND+oB0jkwLxCsK7zK0d5sWoOk+KI+WBahg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELEc8+9on/86MfXLDFbqIoNdYr+whZ3t+QDfX/zZdKu82zyZ5BfwwCQewFHZ4KmYig==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "545bec4d-f190-4546-9fe8-42dd683a8dce",
+                            SecurityStamp = "3f433a43-786a-40c0-b74f-c73dd6d9d2d8",
                             TwoFactorEnabled = false,
                             UserName = "Admin User"
                         });
@@ -257,14 +260,14 @@ namespace CryptoDoge.DAL.Migrations
                         new
                         {
                             Id = "59381279-94ad-4e44-9817-d0c46350464a",
-                            ConcurrencyStamp = "22718be9-6b9f-45ad-9bf6-3d89a1496763",
+                            ConcurrencyStamp = "c6584541-e786-4821-a6c4-6b4639ae52be",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "34790367-a250-442c-bf25-2adbcf3f39a4",
-                            ConcurrencyStamp = "2274aaff-d2ca-4d11-9220-f5d0e80b9abf",
+                            ConcurrencyStamp = "7d7a7916-eb70-40de-9a66-234f0d58dfb4",
                             Name = "USER",
                             NormalizedName = "USER"
                         });

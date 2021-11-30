@@ -1,3 +1,4 @@
+import { CommentComponent } from './components/comment/comment.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,18 +15,22 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {PaginatorModule} from 'primeng/paginator';
 import {PanelModule} from 'primeng/panel';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CaffAnimatorComponent } from './components/caff-animator/caff-animator.component';
 import { ButtonModule } from 'primeng/button';
 import { JwtModule } from '@auth0/angular-jwt';
-import { MessageService } from 'primeng/api';
 import { UserMainPageService } from './services/user-main-page.service';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
 import { UserService } from './services/user.service';
+import {InplaceModule} from 'primeng/inplace';
 import { ToastModule } from 'primeng/toast';
 import { httpInterceptorProviders } from './interceptors/interceptor-providers';
 import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
+import { DetailsComponent } from './components/details/details.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -39,15 +44,20 @@ export function tokenGetter() {
     RegisterComponent,
     HomeComponent,
     ProfileComponent,
+    DetailsComponent,
+    CommentComponent,
     CaffAnimatorComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ConfirmPopupModule,
     HttpClientModule,
     FormsModule,
     MenubarModule,
     ToastModule,
+    InplaceModule,
+    OverlayPanelModule,
     AutoCompleteModule,
     InputTextModule,
     CardModule,
@@ -74,6 +84,7 @@ export function tokenGetter() {
     MessageService,
     UserMainPageService,
     UserService,
+    ConfirmationService,
     httpInterceptorProviders,
     { provide: BASE_PATH, useValue: environment.baseUrl },
     {

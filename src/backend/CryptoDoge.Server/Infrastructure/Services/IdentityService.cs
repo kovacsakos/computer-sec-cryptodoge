@@ -1,5 +1,6 @@
 ﻿using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Interfaces;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace CryptoDoge.Server.Infrastructure.Services
 
         public async Task<User> GetCurrentUserAsync()
         {
-            var id = context.User.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var id = context.User.Claims.Single(x => x.Type == JwtClaimTypes.Id).Value;
             return await userManager.FindByIdAsync(id);
         }
 
