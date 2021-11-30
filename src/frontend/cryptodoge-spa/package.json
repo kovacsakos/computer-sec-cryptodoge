@@ -24,6 +24,7 @@
         "@openapitools/openapi-generator-cli": "^2.4.4",
         "bootstrap": "^5.1.1",
         "file-saver": "^2.0.5",
+        "ng-recaptcha": "^9.0.0",
         "primeicons": "^4.1.0",
         "primeng": "^12.1.1",
         "rxjs": "~6.6.0",

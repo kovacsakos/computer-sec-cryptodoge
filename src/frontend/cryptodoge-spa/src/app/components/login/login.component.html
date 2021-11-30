@@ -8,6 +8,10 @@
           <input id="float-input-pw" class="w-100" type="password" (keyup.enter)="login()" pInputText [(ngModel)]="password"> 
           <label for="float-input-pw">Password</label>
         </span>
+        <div class="mt-4">
+            <re-captcha [(ngModel)]="captcha" name="captcha" required></re-captcha>
+        </div>
+
         <button pButton pRipple class="w-100 float-label-margin" [disabled]="loginDisabled()" type="button" label="Login" (click)="login()"></button>
         <p class="text-center mb-0 mt-4"><a routerLink="/register">No account? Register here!</a></p>
     </div>

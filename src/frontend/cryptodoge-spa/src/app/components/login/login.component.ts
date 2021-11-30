@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
 
   email: string = "";
   password: string = "";
-
+  captcha: string = "";
   constructor(private authService: UserService, private router: Router, private toast: ToastService, private mainPageService: UserMainPageService) { }
 
   ngOnInit() {
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  login() {
+  login() {    
     if (this.loginDisabled()) {return;}
     this.authService.login(this.email, this.password).subscribe(next => {
       this.toast.success('Login successful');
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginDisabled(): boolean {
-    return this.email.length === 0 || this.password.length === 0;
+    return this.email.length === 0 || this.password.length === 0 || this.captcha.length === 0;
   }
 
 }

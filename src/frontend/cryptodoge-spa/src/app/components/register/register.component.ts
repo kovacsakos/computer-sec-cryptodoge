@@ -34,7 +34,8 @@ export class RegisterComponent implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), RegistrationValidators.passwordHasLowerLetter, RegistrationValidators.passwordHasUpperLetter, RegistrationValidators.passwordHasDigits, RegistrationValidators.passwordHasNonAlphaNumeric]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      recaptchaReactive: ['', Validators.required],
     }, {validators: RegistrationValidators.passwordMatchValidator});
   }
 

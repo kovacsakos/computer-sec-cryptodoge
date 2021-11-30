@@ -25,6 +25,7 @@ import { UserMainPageService } from './services/user-main-page.service';
 import { UserService } from './services/user.service';
 import { ToastModule } from 'primeng/toast';
 import { httpInterceptorProviders } from './interceptors/interceptor-providers';
+import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -51,6 +52,8 @@ export function tokenGetter() {
     InputTextModule,
     CardModule,
     PaginatorModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
     PanelModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -72,7 +75,13 @@ export function tokenGetter() {
     UserMainPageService,
     UserService,
     httpInterceptorProviders,
-    { provide: BASE_PATH, useValue: environment.baseUrl }
+    { provide: BASE_PATH, useValue: environment.baseUrl },
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: environment.recaptcha.siteKey,
+      } as RecaptchaSettings,
+    },
   ],
   bootstrap: [AppComponent]
 })
