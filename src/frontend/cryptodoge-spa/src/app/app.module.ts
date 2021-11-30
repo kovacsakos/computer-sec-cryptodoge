@@ -32,6 +32,7 @@ import { ToastModule } from 'primeng/toast';
 import { httpInterceptorProviders } from './interceptors/interceptor-providers';
 import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
 import { DetailsComponent } from './components/details/details.component';
+import { UploadComponent } from './components/upload/upload.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");

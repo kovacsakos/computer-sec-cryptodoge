@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem } from 'primeng/api';
 import { UserService } from './services/user.service';
@@ -27,6 +27,11 @@ export class AppComponent implements OnInit, OnDestroy {
             label: 'Home',
             icon: 'pi pi-fw pi-home',
             routerLink: ['']
+          },
+          {
+            label: 'Upload',
+            icon: 'pi pi-fw pi-upload',
+            routerLink: ['upload']
           }
         ]
       }

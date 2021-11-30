@@ -4,6 +4,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CaffDto, ImagesService, SearchByCaptionDto, SearchByTagsDto } from 'generated/client';
 import { ConfirmationService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,10 @@ import { ConfirmationService } from 'primeng/api';
 export class HomeComponent implements OnInit {
 
   constructor(private toaster: ToastService, private confirmationService: ConfirmationService,
-     private imagesService: ImagesService, private userService: UserService, private http: HttpClient) { }
+    private imagesService: ImagesService, private userService: UserService, private http: HttpClient) { }
+
+  isLoggedIn: Boolean;
+  private subscribtion: Subscription;
 
   caffs: CaffDto[];
   tags: string[] = [];
@@ -26,15 +30,21 @@ export class HomeComponent implements OnInit {
   filteredCaptions: string[] = [];
 
   ngOnInit(): void {
-    this.imagesService.imagesGetCaffs().subscribe(res => {
-      this.caffs = res
-      this.caffs.forEach(caff => {
-        this.tags = [...caff.tags];
-        this.captions = [...caff.captions];
-        this.filteredTags = this.tags;
-        this.filteredCaptions = this.captions;
-      });
+    this.subscribtion = this.userService.$isLoggedIn.subscribe(data => {
+      this.isLoggedIn = data
     });
+
+    if (this.isLoggedIn) {
+      this.imagesService.imagesGetCaffs().subscribe(res => {
+        this.caffs = res
+        this.caffs.forEach(caff => {
+          this.tags = [...caff.tags];
+          this.captions = [...caff.captions];
+          this.filteredTags = this.tags;
+          this.filteredCaptions = this.captions;
+        });
+      });
+    }
   }
 
   filterTags(event) {
@@ -112,7 +122,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  updateCaffsByCaption(caffResult: CaffDto[]){
+  updateCaffsByCaption(caffResult: CaffDto[]) {
     caffResult.forEach(caff => {
       if (!this.caffs.some(c => c.id == caff.id)) {
         this.caffs.push(caff);
@@ -126,19 +136,19 @@ export class HomeComponent implements OnInit {
 
   deleteCaff(event, id: string) {
     this.confirmationService.confirm({
-        target: event.target,
-        message: 'Are you sure that you want to delete this CAFF?',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            this.imagesService.imagesDeleteCaff(id).subscribe(() => {
-              this.toaster.success("CAFF deleted");
-              this.caffs = this.caffs.filter(x => x.id !== id);
-            })
-        },
-        reject: () => {
-            //reject action
-        }
+      target: event.target,
+      message: 'Are you sure that you want to delete this CAFF?',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.imagesService.imagesDeleteCaff(id).subscribe(() => {
+          this.toaster.success("CAFF deleted");
+          this.caffs = this.caffs.filter(x => x.id !== id);
+        })
+      },
+      reject: () => {
+        //reject action
+      }
     });
   }
-  
+
 }
