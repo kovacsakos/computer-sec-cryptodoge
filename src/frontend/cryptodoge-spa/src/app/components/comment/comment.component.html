@@ -1,0 +1,43 @@
+<p-confirmPopup></p-confirmPopup>
+<p-card>
+    <div class="row mb-3">
+        <div class="col">
+            {{comment.added | date: 'long'}}
+        </div>
+        <div *ngIf="isAdmin()" class="col text-end">
+            <button pButton type="button" label="" (click)="editComment()" icon="pi pi-pencil" class="p-button-secondary"></button>
+            <button pButton type="button" label="" (click)="deleteComment($event)" icon="pi pi-trash" class="p-button-danger"></button>
+        </div>
+
+    </div>
+
+    <div class="row" *ngIf="isAdmin()">
+        <div class="col">
+
+        </div>
+        <div class="col text-end">
+            <i class="pi pi-user"></i> {{comment.userName}}
+        </div>
+
+
+        <p-inplace #inplace closable="closable" [style]="{'min-height':'33px'}">
+            <ng-template pTemplate="display">
+                {{comment.comment}}
+            </ng-template>
+            <ng-template pTemplate="content">
+                <input type="text" [(ngModel)]="updatedComment" pInputText>
+                <p-button label="" (click)="updateComment()" icon="pi pi-check"></p-button>
+            </ng-template>
+        </p-inplace>
+
+    </div>
+    <div class="row" *ngIf="!isAdmin()">
+        <div class="col">
+            {{comment.comment}}
+        </div>
+        <div class="col text-end">
+            <i class="pi pi-user"></i> {{comment.userName}}
+        </div>
+    </div>
+
+</p-card>
