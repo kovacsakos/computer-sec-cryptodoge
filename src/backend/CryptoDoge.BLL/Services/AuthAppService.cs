@@ -43,7 +43,7 @@ namespace CryptoDoge.BLL.Services
                 throw new AuthException("Wrong username or password");
             }
 
-            var result = await signInManager.PasswordSignInAsync(user, loginDto.Password, true, false);
+            var result = await signInManager.PasswordSignInAsync(user, loginDto.Password, true, true);
             if (!result.Succeeded)
             {
                 throw new AuthException("Login was not successful");
