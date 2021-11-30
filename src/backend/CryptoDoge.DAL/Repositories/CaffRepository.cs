@@ -30,7 +30,8 @@ namespace CryptoDoge.DAL.Repositories
 
         public async Task<Caff> GetCaffByIdAsync(string caffId) 
             => await dbContext.Caffs
-                .Include(caff => caff.Comments).ThenInclude(caffComment => caffComment.User)
+                .Include(c => c.UploadedBy)
+                .Include(caff => caff.Comments.OrderByDescending(cm => cm.Added)).ThenInclude(caffComment => caffComment.User)
                 .Include(caff => caff.Ciffs).ThenInclude(ciff => ciff.Tags)
                 .SingleOrDefaultAsync(caff => caff.Id == caffId);
 
@@ -66,7 +67,7 @@ namespace CryptoDoge.DAL.Repositories
         }
 
         public async Task<CaffComment> GetCaffCommentByIdAsync(string id) 
-            => await dbContext.CaffComments.SingleOrDefaultAsync(caffComment => caffComment.Id == id);
+            => await dbContext.CaffComments.Include(c => c.User).SingleOrDefaultAsync(caffComment => caffComment.Id == id);
 
         public async Task UpdateCaffCommentAsync(CaffComment caffComment)
         {

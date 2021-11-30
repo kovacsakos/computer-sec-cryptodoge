@@ -141,6 +141,7 @@ namespace CryptoDoge.BLL.Services
                     Comment = comment,
                     Caff = caff,
                     User = user,
+                    Added = DateTime.UtcNow
                 });
                 return id;
             }
