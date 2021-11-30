@@ -11,7 +11,7 @@
         <p-card class="caff-card" *ngFor="let caff of caffs let i = index">
             <app-caff-animator class="m-2" [caff]="caff"></app-caff-animator>
             <p-panel class="caff-card">
-                <p-button class="me-2" [routerLink]="['details', caff.id]" label="Details"></p-button>
+                <p-button class="me-2" [routerLink]="['/details', caff.id]" label="Details"></p-button>
                 <p-button class="me-2" label="Download" icon="pi pi-download" iconPos="left" (click)="download(caff.id)"></p-button>
                 <button *ngIf="isAdmin()" pButton type="button" label="Delete" (click)="deleteCaff($event, caff.id)" icon="pi pi-trash" class="p-button-danger"></button>
             </p-panel>

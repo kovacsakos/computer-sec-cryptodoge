@@ -12,6 +12,7 @@ using CryptoDoge.Server.Controllers;
 using CryptoDoge.Server.Infrastructure.Services;
 using CryptoDoge.Server.Tests.Helpers;
 using CryptoDoge.Shared;
+using IdentityModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -68,8 +69,8 @@ namespace CryptoDoge.Server.Tests
             var user = new User() { UserName = "JohnDoe", Id = "30776ea1-016e-419d-becf-afeab0c548e7" };
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtClaimTypes.Name, user.UserName),
+                new Claim(JwtClaimTypes.Id, user.Id),
             };
             var identity = new ClaimsIdentity(claims, "Test");
             var claimsPrincipal = new ClaimsPrincipal(identity);

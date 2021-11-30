@@ -143,7 +143,9 @@ export class HomeComponent implements OnInit {
         this.imagesService.imagesDeleteCaff(id).subscribe(() => {
           this.toaster.success("CAFF deleted");
           this.caffs = this.caffs.filter(x => x.id !== id);
-        })
+        }, err => {
+          this.toaster.error("Error during CAFF deletion");
+        });
       },
       reject: () => {
         //reject action

@@ -5,6 +5,7 @@ using CryptoDoge.Model.Entities;
 using CryptoDoge.Model.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -18,6 +19,7 @@ namespace CryptoDoge.DLL.UnitTests
 	{
 		private DbContextOptions<ApplicationDbContext> options;
 		private Mock<UserManager<User>> userManager;
+		private Mock<ILogger<AuthRepository>> logger;
 
 		[SetUp]
 		public void Setup()
@@ -28,6 +30,7 @@ namespace CryptoDoge.DLL.UnitTests
 
 			var _store = new Mock<IUserStore<User>>();
 			userManager = new Mock<UserManager<User>>(_store.Object, null, null, null, null, null, null, null, null);
+			logger = new Mock<ILogger<AuthRepository>>();
 		}
 
 		[Test]
@@ -57,7 +60,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var refreshToken = "refreshToken";
-				var authRepository = new AuthRepository(context, userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 				var foundUser = await authRepository.GetUserByRefreshTokenAsync(refreshToken);
 
 				Assert.AreEqual(user.Id, foundUser.Id);
@@ -94,7 +97,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var refreshToken = "nonExistentialRefreshToken";
-				var authRepository = new AuthRepository(context, userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 
 				try 
 				{ 
@@ -152,7 +155,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				
-				var authRepository = new AuthRepository(context,userManager.Object);
+				var authRepository = new AuthRepository(context,userManager.Object, logger.Object);
 
 				try
 				{
@@ -209,7 +212,7 @@ namespace CryptoDoge.DLL.UnitTests
 
 			using (var context = new ApplicationDbContext(options))
 			{
-				var authRepository = new AuthRepository(context,userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 
 				try
 				{
@@ -315,7 +318,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 
-				var authRepository = new AuthRepository(context,userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 				await authRepository.RemoveRefreshTokenAsync(user.Id);
 				var foundUser = await context.Users.SingleOrDefaultAsync(r => r.Id == user.Id);
 
@@ -367,7 +370,7 @@ namespace CryptoDoge.DLL.UnitTests
 			using (var context = new ApplicationDbContext(options))
 			{
 				var newRefreshToken = "newRefreshToken";
-				var authRepository = new AuthRepository(context,userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 
 				await authRepository.SaveRefreshTokenAsync(user, newRefreshToken);
 				var foundUser = await context.Users.SingleOrDefaultAsync(r => r.Id == user.Id);
@@ -421,7 +424,7 @@ namespace CryptoDoge.DLL.UnitTests
 			{
 				var nonExistentUser = new User { Id = "nonExistentId" };
 				var newRefreshToken = "newRefreshToken";
-				var authRepository = new AuthRepository(context,userManager.Object);
+				var authRepository = new AuthRepository(context, userManager.Object, logger.Object);
 
 				try
 				{
