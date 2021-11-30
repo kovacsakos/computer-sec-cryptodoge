@@ -14,7 +14,6 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import {ConfirmPopupModule} from 'primeng/confirmpopup';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import {FileUploadModule} from 'primeng/fileupload';
@@ -45,7 +44,6 @@ export function tokenGetter() {
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    ProfileComponent,
     DetailsComponent,
     CommentComponent,
     CaffAnimatorComponent,

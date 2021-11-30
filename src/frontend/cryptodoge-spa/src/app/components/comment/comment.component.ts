@@ -31,6 +31,8 @@ export class CommentComponent implements OnInit {
       this.comment.comment = this.updatedComment;
       this.inPlace.deactivate();
       this.toaster.success("Comment updated");
+    }, err => {
+      this.toaster.error("Comment update failed.")
     })
   }
 

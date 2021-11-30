@@ -26,7 +26,7 @@ export class DetailsComponent implements OnInit {
   ngOnInit(): void {
     this.imagesService.imagesGetCaffByIdAsync(this.id).subscribe(result => {
       this.caff = result;
-    })
+    });
   }
 
   sendComment() {
@@ -36,15 +36,19 @@ export class DetailsComponent implements OnInit {
       this.toaster.success("Comment added");
       this.imagesService.imagesGetComment(newCommentId).subscribe(addedComment => {
         this.caff.comments.unshift(addedComment);
-      })      
-    })
+      });   
+    }, err => {
+      this.toaster.error("Error, comment was not added.")
+    });
   }
 
   commentShouldBeDeleted(commentId: string) {
     this.imagesService.imagesDeleteComment(commentId).subscribe(res => {
       this.toaster.success("Comment deleted");
       this.caff.comments = this.caff.comments.filter(x => x.id !== commentId);
-    })
+    }, err => {
+      this.toaster.error("Comment deletion failed");
+    });
   }
 
   download(id: string) {

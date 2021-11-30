@@ -13,11 +13,6 @@ export class UserMainPageService {
       return [''];
     }
 
-    if (this.userService.hasRole(['ADMIN']))  {
-      return ['/home'];
-    }
     return ['/home'];
   }
-
-
 }
