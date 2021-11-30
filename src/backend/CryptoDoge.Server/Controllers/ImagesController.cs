@@ -33,14 +33,14 @@ namespace CryptoDoge.Server.Controllers
             this.identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "RequireLogin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CaffDto>>> GetCaffs()
         {
             return Ok(await imagingService.GetCaffsAsync());
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "RequireLogin")]
         [HttpGet("{caffId}")]
         public async Task<ActionResult<CaffDto>> GetCaffByIdAsync(string caffId)
         {
@@ -52,7 +52,7 @@ namespace CryptoDoge.Server.Controllers
             return NotFound();
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "RequireLogin")]
         [HttpPost("searchByCaption")]
         public async Task<ActionResult<IEnumerable<CaffDto>>> SearchCaffsByCaption([FromBody] SearchByCaptionDto searchByCaptionDto)
         {
@@ -64,7 +64,7 @@ namespace CryptoDoge.Server.Controllers
             return Ok(await imagingService.SearchCaffsByCaption(searchByCaptionDto.Query));
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "RequireLogin")]
         [HttpPost("searchByTags")]
         public async Task<ActionResult<IEnumerable<CaffDto>>> SearchCaffsByTags([FromBody] SearchByTagsDto searchByTagsDto)
         {
@@ -76,7 +76,7 @@ namespace CryptoDoge.Server.Controllers
             return Ok(await imagingService.SearchCaffsByTags(searchByTagsDto.QueryTags));
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "ADMIN,USER")]
+        [Authorize(Policy = "RequireLogin")]
         [HttpPost("upload")]
         public async Task<ActionResult<CaffDto>> UploadCaff([FromForm] IFormFile file)
         {
@@ -99,6 +99,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireLogin")]
         [HttpGet("{caffId}/download")]
         public async Task<IActionResult> DownloadCaff(string caffId)
         {
@@ -114,7 +115,7 @@ namespace CryptoDoge.Server.Controllers
 
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpDelete("{caffId}")]
         public async Task<ActionResult> DeleteCaff(string caffId)
         {
@@ -122,7 +123,7 @@ namespace CryptoDoge.Server.Controllers
             return NoContent();
         }
 
-        [AllowAnonymous]
+        [Authorize(Policy = "RequireLogin")]
         [HttpGet("comment/{id}")]
         public async Task<ActionResult<CaffCommentReturnDto>> GetComment(string id)
         {
@@ -136,7 +137,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "ADMIN,USER")]
+        [Authorize(Policy = "RequireLogin")]
         [HttpPost("comment/{caffId}")]
         public async Task<ActionResult<string>> PostComment(string caffId, [FromBody] CaffCommentDto caffCommentDto)
         {
@@ -152,7 +153,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPut("comment/{caffCommentId}")]
         public async Task<ActionResult> UpdateComment(string caffCommentId, [FromBody] CaffCommentDto caffCommentDto)
         {
@@ -167,7 +168,7 @@ namespace CryptoDoge.Server.Controllers
             }
         }
 
-        [Authorize(Policy = "RequireLogin", Roles = "ADMIN")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpDelete("comment/{caffCommentId}")]
         public async Task<ActionResult> DeleteComment(string caffCommentId)
         {

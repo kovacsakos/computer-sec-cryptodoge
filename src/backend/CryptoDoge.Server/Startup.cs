@@ -10,6 +10,7 @@ using CryptoDoge.ParserService;
 using CryptoDoge.Server.Infrastructure.Services;
 using CryptoDoge.Shared;
 using FluentValidation.AspNetCore;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -71,7 +73,7 @@ namespace CryptoDoge.Server
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
                 .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, cfg =>
+                .AddJwtBearer("USER", cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;
                     cfg.SaveToken = true;
@@ -86,19 +88,45 @@ namespace CryptoDoge.Server
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 })
-                ;
+                .AddJwtBearer("ADMIN", cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = Configuration.GetSection("Authentication")["JwtAdminIssuer"],
+                        ValidateAudience = true,
+                        ValidAudience = Configuration.GetSection("Authentication")["JwtAdminIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetSection("Authentication")["JwtKey"])),
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
+                    };
+                });
             #endregion
 
-            #region Authorization
+            #region Authorization Roles
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("RequireAdminRole", new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .AddAuthenticationSchemes("ADMIN")
+                        .RequireClaim(JwtClaimTypes.Role, "ADMIN")
+                        .Build());
+
+                options.AddPolicy("RequireUserRole", new AuthorizationPolicyBuilder()
+                     .RequireAuthenticatedUser()
+                     .AddAuthenticationSchemes("USER")
+                     .RequireClaim(JwtClaimTypes.Role, "USER")
+                     .Build());
+
                 options.AddPolicy("RequireLogin", new AuthorizationPolicyBuilder()
                      .RequireAuthenticatedUser()
-                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                     .AddAuthenticationSchemes("USER", "ADMIN")
+                     .RequireClaim(JwtClaimTypes.Role, "USER", "ADMIN")
                      .Build());
             });
             #endregion
-
             services.AddAutoMapper(typeof(MapperProfiles));
 
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("Default")));
