@@ -1,6 +1,9 @@
+import { ToastService } from 'src/app/services/toast.service';
+import { UserService } from 'src/app/services/user.service';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CaffDto, ImagesService, SearchByCaptionDto, SearchByTagsDto } from 'generated/client';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-home',
@@ -9,7 +12,8 @@ import { CaffDto, ImagesService, SearchByCaptionDto, SearchByTagsDto } from 'gen
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private imagesService: ImagesService, private http: HttpClient) { }
+  constructor(private toaster: ToastService, private confirmationService: ConfirmationService,
+     private imagesService: ImagesService, private userService: UserService, private http: HttpClient) { }
 
   caffs: CaffDto[];
   tags: string[] = [];
@@ -115,4 +119,26 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
+  isAdmin() {
+    return this.userService.hasRole(["ADMIN"]);
+  }
+
+  deleteCaff(event, id: string) {
+    this.confirmationService.confirm({
+        target: event.target,
+        message: 'Are you sure that you want to delete this CAFF?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            this.imagesService.imagesDeleteCaff(id).subscribe(() => {
+              this.toaster.success("CAFF deleted");
+              this.caffs = this.caffs.filter(x => x.id !== id);
+            })
+        },
+        reject: () => {
+            //reject action
+        }
+    });
+  }
+  
 }
