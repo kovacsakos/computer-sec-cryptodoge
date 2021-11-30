@@ -6,14 +6,23 @@ import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { RegisterComponent } from './components/register/register.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { AuthGuard } from './guards/auth.guard.ts';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent},
-  { path: 'login', component: LoginComponent },
-  { path: 'upload', component: UploadComponent },
-  { path: 'details/:id', component: DetailsComponent },
-  { path: 'profile', component: ProfileComponent },
+  { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'home', component: HomeComponent, data: {roles: ['USER', 'ADMIN']}},
+      { path: 'upload', component: UploadComponent, data: {roles: ['USER', 'ADMIN']} },
+      { path: 'details/:id', component: DetailsComponent, data: {roles: ['USER', 'ADMIN']} },
+    ]
+  },
+  { path: '**', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({

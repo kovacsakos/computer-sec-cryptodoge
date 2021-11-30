@@ -40,8 +40,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.items = [
           {
             label: 'Login',
-            icon: 'pi pi-fw pi-user',
-            routerLink: ['/login']
+            icon: 'pi pi-fw pi-sign-in',
+            routerLink: ['']
           },
           {
             label: 'Register',
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout() {
     this.userService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
+      this.router.navigate(['']);
     });
   }
 

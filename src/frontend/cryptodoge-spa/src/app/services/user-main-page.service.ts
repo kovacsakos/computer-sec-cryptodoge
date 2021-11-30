@@ -14,9 +14,9 @@ export class UserMainPageService {
     }
 
     if (this.userService.hasRole(['ADMIN']))  {
-      return [''];
+      return ['/home'];
     }
-    return [''];
+    return ['/home'];
   }
 
 
