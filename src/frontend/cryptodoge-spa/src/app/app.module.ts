@@ -14,6 +14,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import {FileUploadModule} from 'primeng/fileupload';
 import {PaginatorModule} from 'primeng/paginator';
 import {PanelModule} from 'primeng/panel';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -26,6 +27,7 @@ import { UserService } from './services/user.service';
 import { ToastModule } from 'primeng/toast';
 import { httpInterceptorProviders } from './interceptors/interceptor-providers';
 import { RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings, RECAPTCHA_SETTINGS } from 'ng-recaptcha';
+import { UploadComponent } from './components/upload/upload.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -39,7 +41,8 @@ export function tokenGetter() {
     RegisterComponent,
     HomeComponent,
     ProfileComponent,
-    CaffAnimatorComponent
+    CaffAnimatorComponent,
+    UploadComponent
   ],
   imports: [
     BrowserModule,
@@ -58,6 +61,7 @@ export function tokenGetter() {
     ReactiveFormsModule,
     ButtonModule,
     BrowserAnimationsModule,
+    FileUploadModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
