@@ -82,6 +82,12 @@ namespace CryptoDoge.Server.Controllers
         {
             try
             {
+                var extension = Path.GetExtension(file.FileName);
+                if (extension != ".caff")
+                {
+                    throw new Exception("Invalid file extension.");
+                }
+
                 using var caffStream = new MemoryStream();
                 await file.CopyToAsync(caffStream);
                 caffStream.Position = 0;
