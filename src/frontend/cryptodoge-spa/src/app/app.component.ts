@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { MenubarModule } from 'primeng/menubar';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { UserService } from './services/user.service';
 import { Router } from '@angular/router';

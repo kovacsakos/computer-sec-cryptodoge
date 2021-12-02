@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   constructor(private toaster: ToastService, private confirmationService: ConfirmationService,
     private imagesService: ImagesService, private userService: UserService, private http: HttpClient) { }
 
-  isLoggedIn: Boolean;
+  isLoggedIn: boolean;
   private subscribtion: Subscription;
 
   caffs: CaffDto[];
