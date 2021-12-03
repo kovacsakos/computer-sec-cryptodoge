@@ -6,44 +6,51 @@ using namespace CaffImport;
 
 char* importCaffAsJsonFromString(uint8_t* caffBytes, uint64_t size) {
 
-	std::vector<unsigned char> bytes;
-	for (uint64_t i = 0; i < size; i++) {
-		bytes.push_back(caffBytes[i]);
-	}
+	try {
+		std::vector<unsigned char> bytes;
+		for (uint64_t i = 0; i < size; i++) {
+			bytes.push_back(caffBytes[i]);
+		}
 
-	try{
 		auto caff = importCaff(bytes);
 		char* json = convertCaffToJson(caff);
 		return json;
 	}
 	catch (ParserException& e) {
 		Logger::exception(e);
-		throw e;
+		return nullptr;
+	}
+	catch (...) {
+		return nullptr;
 	}
 }
 
 char* importCaffAsJson(const char* filepath) {
 
-	std::ifstream caffStream(filepath, std::ios::binary);
-
-	if (!caffStream.is_open()) {
-		throw ParserException("Filepath " + std::string(filepath) + " could not be opened");
-	}
-	std::vector<unsigned char> bytes;
-	unsigned char c;
-	while (caffStream.read(reinterpret_cast<char*>(&c), 1)) {
-		bytes.push_back(c);
-	}
-
 	try {
+		std::ifstream caffStream(filepath, std::ios::binary);
+
+		if (!caffStream.is_open()) {
+			throw ParserException("Filepath " + std::string(filepath) + " could not be opened");
+		}
+		std::vector<unsigned char> bytes;
+		unsigned char c;
+		while (caffStream.read(reinterpret_cast<char*>(&c), 1)) {
+			bytes.push_back(c);
+		}
+
 		auto caff = importCaff(bytes);
 		char* json = convertCaffToJson(caff);
 		return json;
 	}
 	catch (ParserException& e) {
 		Logger::exception(e);
-		throw e;
+		return nullptr;
 	}
+	catch (...) {
+		return nullptr;
+	}
+
 }
 
 void freeNativeMem(char* address) {
