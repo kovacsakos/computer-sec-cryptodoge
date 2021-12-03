@@ -43,6 +43,12 @@ namespace CryptoDoge.ParserService
             try
             {
                 textPtr = importCaffAsJson(filePath);
+
+                if (textPtr == IntPtr.Zero)
+                {
+                    throw new ParserException("Error during parsing caff file.");
+                }
+
                 string json = Marshal.PtrToStringAnsi(textPtr);
                 return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<ParsedCaff>(Encoding.UTF8.GetBytes(json));
             }
@@ -87,6 +93,12 @@ namespace CryptoDoge.ParserService
                 Marshal.Copy(buffer, 0, pnt, buffer.Length);
 
                 textPtr = importCaffAsJsonFromString(pnt, buffer.Length);
+
+                if (textPtr == IntPtr.Zero)
+                {
+                    throw new ParserException("Error during parsing caff file.");
+                }
+
                 string json = Marshal.PtrToStringAnsi(textPtr);
 
                 return SpanJson.JsonSerializer.Generic.Utf8.Deserialize<ParsedCaff>(Encoding.UTF8.GetBytes(json));
